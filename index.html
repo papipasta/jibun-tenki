@@ -100,6 +100,7 @@ main{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px max(14px,env(safe-ar
 .wd{display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:8px;align-items:center;margin-bottom:8px}
 .wd svg{width:34px;height:34px}
 .wd input{min-height:44px;font-size:16px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);padding:0 12px;width:100%;font-family:var(--voice)}
+  .note{font-size:.88rem;line-height:1.7}.note p{margin:0 0 10px}.note b{font-weight:500}.note a{color:var(--ac);overflow-wrap:anywhere}
 textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);padding:8px;font-family:monospace}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:10px 16px;z-index:2000;display:none;width:max-content;max-width:calc(100% - 32px);text-align:center}
 /* 波の地図 */
@@ -112,6 +113,7 @@ textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5
 #nmapw{flex:1 1 auto;min-height:0;position:relative}
 #nmap{position:absolute;inset:0;background:var(--nb)}
 .leaflet-container{font-family:var(--body);background:var(--nb)}
+#nmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.6)}
 .leaflet-control-attribution{background:rgba(13,18,23,.7)!important;color:#aab4be!important;font-size:10px}
 .leaflet-control-attribution a{color:#d0d8e0!important}
 #nwhen{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:900;background:rgba(13,18,23,.82);border:1px solid var(--nl);border-radius:20px;padding:6px 16px;font-weight:500;white-space:nowrap;pointer-events:none;font-size:1.05rem}
@@ -178,10 +180,20 @@ textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5
 
   <div class="sec"><h3>天気ごとのひとこと</h3><div id="words"></div></div>
 
-  <div class="sec"><h3>設定の持ち出し</h3>
-    <p class="hint" style="margin:0 0 6px">別の端末へ移すときは、この文字列をコピーして貼りつけます</p>
-    <textarea id="exp" spellcheck="false"></textarea>
-    <div class="wrapb"><button class="btn g" id="bCopy">コピー</button><button class="btn g" id="bImp">貼りつけた設定を読みこむ</button><button class="btn g" id="bReset">はじめの状態に戻す</button></div>
+  <div class="sec" id="about"><h3>このアプリについて</h3>
+    <div class="note">
+      <p><b>ご注意</b><br>表示している天気と波は、コンピューターの予測モデルの計算結果をそのまま出したもので、気象庁の予報ではありません。正確さは保証できません。防災や、釣り・マリンレジャー・船の運航などの判断には、かならず<a href="https://www.jma.go.jp/bosai/" target="_blank" rel="noopener">気象庁の警報・注意報・予報</a>を確かめてください。</p>
+      <p><b>データと地図の出典</b><br>
+        天気・波：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a>（<a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener">CC BY 4.0</a>）<br>
+        地名検索：Open-Meteo Geocoding API（GeoNames をもとにしたデータ）<br>
+        地図：<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>（色を反転して表示）<br>
+        海岸線：<a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a><br>
+        地図の表示：<a href="https://leafletjs.com/" target="_blank" rel="noopener">Leaflet</a><br>
+        書体：Zen Antique・Kiwi Maru・Zen Maru Gothic（SIL Open Font License）</p>
+      <p><b>位置情報と保存について</b><br>「今いる場所」の位置と登録した地点の緯度・経度は、天気を取得するために Open-Meteo へ送られます。設定はこの端末のブラウザの中にだけ保存され、制作者が集めることはありません。</p>
+      <p>制作：水曜日のパピィー（<a href="https://x.com/cookingpapi55" target="_blank" rel="noopener">X @cookingpapi55</a>）</p>
+    </div>
+    <div class="wrapb"><button class="btn g" id="bReset">はじめの状態に戻す</button></div>
   </div>
 </div></div>
 <section id="nami" aria-label="波の地図">
@@ -288,7 +300,7 @@ function draw(d,at){
   B.detail=`<section class="card"><p class="ct">くわしく</p><div class="grid">${cells.map(x=>`<div class="cell"><div class="k">${x[0]}</div><div class="x">${esc(x[1])}</div></div>`).join('')}</div></section>`;
   const t=new Date(at);
   view.innerHTML=S.parts.filter(p=>p[1]).map(p=>B[p[0]]).join('')+
-    `<p class="foot">${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} 更新　・　天気データ <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>`}
+    `<p class="foot">${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} 更新　・　<a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a><br>予報は目安です　<a href="#" id="aAbout">このアプリについて・ご注意</a></p>`;$('#aAbout').onclick=e=>{e.preventDefault();openSheet();setTimeout(()=>$('#about').scrollIntoView({block:'start'}),50)}}
 
 function renderChips(){
   $('#chips').innerHTML=S.places.map((p,i)=>`<button class="chip${i===S.cur?' on':''}" data-i="${i}">${esc(p.n)}</button>`).join('');
@@ -319,7 +331,6 @@ function renderSheet(){
   $('#units').innerHTML=[['c','℃（摂氏）'],['f','℉（華氏）']].map(t=>`<button class="${S.unit===t[0]?'on':''}" data-un="${t[0]}">${t[1]}</button>`).join('');
   $('#winds').innerHTML=[['ms','風 m/s'],['kmh','風 km/h']].map(t=>`<button class="${S.wind===t[0]?'on':''}" data-wi="${t[0]}">${t[1]}</button>`).join('');
   $('#words').innerHTML=Object.keys(CATS).map(c=>`<label class="wd">${icon(c)}<input data-w="${c}" value="${esc(S.words[c]||'')}" placeholder="${CATS[c]}のときのひとこと" maxlength="60" aria-label="${CATS[c]}のひとこと"></label>`).join('');
-  $('#exp').value=JSON.stringify({places:S.places,parts:S.parts,theme:S.theme,size:S.size,unit:S.unit,wind:S.wind,words:S.words});
 }
 const panel=$('.panel');
 panel.addEventListener('click',e=>{
@@ -352,9 +363,7 @@ $('#bGeo').onclick=()=>{if(!navigator.geolocation){toast('この端末では現�
   navigator.geolocation.getCurrentPosition(p=>{S.places.push({n:'現在地',lat:+p.coords.latitude.toFixed(3),lon:+p.coords.longitude.toFixed(3),sub:'📍'});S.cur=S.places.length-1;persist();renderSheet();renderChips();toast('現在地を追加しました')},
     ()=>toast('現在地を取得できませんでした　位置情報の許可を確かめてください'),{timeout:10000})};
 
-/* 持ち出し */
-$('#bCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#exp').value);toast('コピーしました')}catch(e){$('#exp').select();toast('選択しました　長押しでコピーしてください')}};
-$('#bImp').onclick=()=>{try{S=fix(Object.assign(JSON.parse($('#exp').value),{cur:0}));persist();applyLook();renderSheet();renderChips();toast('読みこみました')}catch(e){toast('読みこめませんでした　文字列を確かめてください')}};
+/* はじめに戻す */
 let resetArmed=0;
 $('#bReset').onclick=e=>{if(Date.now()-resetArmed>3000){resetArmed=Date.now();e.target.textContent='もう一度押すと戻します';setTimeout(()=>e.target.textContent='はじめの状態に戻す',3000);return}
   S=clone(DEF);persist();applyLook();renderSheet();renderChips();toast('はじめの状態に戻しました')};
@@ -522,10 +531,9 @@ async function openNami(){
   if(!NAMI.map){
     const m=NAMI.map=L.map('nmap',{zoomControl:false,zoomSnap:.25,minZoom:4,maxZoom:9,maxBounds:[[22,121],[48.5,151]],maxBoundsViscosity:1,preferCanvas:true});
     const fitMin=()=>m.setMinZoom(Math.max(4,m.getBoundsZoom([[24,124],[46,148]],false)-.25));fitMin();m.on('resize',fitMin);
-    for(const [n,z] of [['wave',350],['flow',360],['lbl',450]]){m.createPane(n).style.zIndex=z;m.getPane(n).style.pointerEvents='none'}
-    const at='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>・Natural Earth・<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>';
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',attribution:at}).addTo(m);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',pane:'lbl'}).addTo(m);
+    for(const [n,z] of [['wave',350],['flow',360]]){m.createPane(n).style.zIndex=z;m.getPane(n).style.pointerEvents='none'}
+    const at='<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>・Natural Earth・<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>';
+    L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png',{attribution:at,maxNativeZoom:18}).addTo(m);
     m.attributionControl.setPrefix(false);
     CW=L.DomUtil.create('canvas','',m.getPane('wave'));CF=L.DomUtil.create('canvas','',m.getPane('flow'));
     const p=S.places[S.cur];if(p)m.setView([Math.min(44,Math.max(28,p.lat)),Math.min(146,Math.max(126,p.lon))],6);else m.fitBounds([[30.5,129],[45.5,145.5]]);
