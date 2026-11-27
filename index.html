@@ -65,10 +65,31 @@ main{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px max(14px,env(safe-ar
 .wchips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
 .wc{padding:4px 10px;border-radius:8px;font-weight:500;font-size:.9rem;white-space:nowrap}
 .wc.l1{background:#f6e27a;color:#3a2f00}.wc.l2{background:#e2453a;color:#fff}.wc.l3{background:#7a1fa2;color:#fff}
-.jd{border-top:1px solid var(--line);padding:8px 0}
+.jd{border-top:1px solid var(--line);padding:10px 0 6px}
 .jdh{display:flex;align-items:baseline;gap:8px}.jdh small{color:var(--sub);font-size:.8rem}
-.jw{margin:2px 0;word-break:keep-all;overflow-wrap:anywhere}
-.js{margin:2px 0;font-size:.82rem;color:var(--sub);overflow-wrap:anywhere}.js span{display:inline-block;margin-right:10px;white-space:nowrap}
+.jwx{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-top:4px}
+.jwx svg{width:44px;height:44px;flex:0 0 auto}
+.cn{font-size:.75rem;color:var(--sub);white-space:nowrap}
+.bd{font-size:.75rem;padding:2px 8px;border-radius:10px;background:color-mix(in srgb,var(--hot) 18%,transparent);color:var(--ink);white-space:nowrap}
+.jw{margin:2px 0 6px;font-size:.8rem;color:var(--sub);word-break:keep-all;overflow-wrap:anywhere}
+.jb{display:grid;grid-template-columns:3.6em minmax(0,1fr);align-items:center;gap:8px;margin-top:6px}
+.jl{font-size:.78rem;color:var(--sub);white-space:nowrap}
+.pops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.pp{display:flex;flex-direction:column;align-items:center;gap:1px}
+.pp .pb{width:100%;max-width:40px;height:26px;border-radius:5px;background:var(--line);position:relative;overflow:hidden}
+.pp .pb i{position:absolute;left:0;right:0;bottom:0;background:var(--cold)}
+.pp b{font-size:.82rem;font-weight:500;white-space:nowrap}.pp small{font-size:.62rem;color:var(--sub);white-space:nowrap}
+.pp.na{opacity:.45}
+.wrow{display:flex;align-items:center;flex-wrap:wrap;gap:4px 6px}
+.wi{display:inline-flex;align-items:center;gap:4px;padding:3px 8px 3px 4px;border-radius:14px;background:color-mix(in srgb,var(--sub) 12%,transparent);white-space:nowrap;font-size:.85rem}
+.wi em{font-style:normal;font-size:.72rem;padding:1px 6px;border-radius:8px;margin-left:2px}
+.wi.s1 em{background:#f6e27a;color:#3a2f00}.wi.s2 em{background:#f0a040;color:#2a1500}.wi.s3 em{background:#e2453a;color:#fff}
+.wi.sea{padding-left:8px}
+.warr{width:22px;height:22px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.warr circle{stroke:var(--line)}
+.wv{display:inline-flex;align-items:flex-end;gap:5px;height:28px}
+.wv i{display:block;width:12px;border-radius:3px 3px 1px 1px}
+.wv b{font-weight:500;white-space:nowrap;font-size:.95rem}
+.okdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#3cbf6a;margin-right:6px;vertical-align:1px}
 a.lk{display:inline-flex;align-items:center;text-decoration:none;font-size:.9rem}
 #jmaC .hint{margin:0 0 6px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -378,15 +399,36 @@ async function jmaLoad(p){const el=$('#jmaC');if(!el||!p)return;const key='jibun
     if(!r.days&&!r.warn)throw 0;save(key,{at:Date.now(),r});if($('#jmaC'))jmaDraw(r)}
   catch(e){if($('#jmaC'))$('#jmaC').innerHTML=`<p class="ct">気象庁の予報</p><p class="hint">気象庁のデータを読みこめませんでした</p>${jmaLinks(p)}`}}
 const jmaLinks=p=>`<div class="wrapb"><a class="btn g lk" href="https://www.jma.go.jp/bosai/warning/${p&&p.c20?'#area_type=class20s&area_code='+p.c20+'&lang=ja':''}" target="_blank" rel="noopener">注意報・警報を気象庁で見る</a><a class="btn g lk" href="https://www.jma.go.jp/bosai/forecast/${p&&p.off?'#area_type=offices&area_code='+p.off:''}" target="_blank" rel="noopener">天気予報</a></div>`;
+/* 気象庁の文を図にする */
+const z2h=s=>String(s).replace(/[０-９．]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/\u3000+/g,' ').trim();
+const wcat=t=>/晴/.test(t)?'sun':/くもり|曇/.test(t)?'cloud':/雪|みぞれ/.test(t)?'snow':/雨/.test(t)?'rain':/霧/.test(t)?'fog':null;
+function wParse(s){const tk=z2h(s).split(/\s+/),CN={'後':'のち','から':'のち','時々':'ときどき','一時':'一時'};let a=null,b=null,cn='';
+  for(let i=0;i<tk.length;i++){const c=wcat(tk[i]);if(!a&&c){a=c;continue}if(a&&!b&&CN[tk[i]]&&wcat(tk[i+1]||'')){cn=CN[tk[i]];b=wcat(tk[i+1]);i++}}
+  const bd=[];if(/雷/.test(s))bd.push('雷');if(/ふぶ/.test(s))bd.push('ふぶき');if(/大雨|激しく/.test(s))bd.push('強い雨');
+  return{a:a||'cloud',b,cn,bd}}
+const DIRS={'北':0,'北東':45,'東':90,'南東':135,'南':180,'南西':225,'西':270,'北西':315};
+function windParse(s){s=z2h(s);const [land,...rest]=s.split(/\s*(?:海上|[^\s]+島)\s*では\s*/);const seg=land.split(/\s*後\s*/);let d=null;
+  const out=seg.map(x=>{const m=x.match(/(北東|北西|南東|南西|北|東|南|西)の風/);if(m)d=m[1];const st=/非常に強く/.test(x)?3:/やや強く/.test(x)?1:/強く/.test(x)?2:0;return{d,st}}).filter(x=>x.d);
+  const sea=rest.length?(/非常に強く/.test(rest.join())?3:/やや強く/.test(rest.join())?1:/強く/.test(rest.join())?2:0):-1;return{out,sea}}
+const STW=['','やや強い','強い','非常に強い'];
+const arrowSvg=deg=>`<svg class="warr" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11"/><path d="M12 5v13M7 13l5 5 5-5" transform="rotate(${deg} 12 12)"/></svg>`;
+function waveParse(s){s=z2h(s);return{v:(s.match(/\d+(\.\d+)?/g)||[]).map(Number),u:/うねり/.test(s)}}
 function jmaDraw(r){const el=$('#jmaC');if(!el)return;const P=r.p,W='日月火水木金土';
   const rp=r.rep?new Date(r.rep):null;
   let wh='';if(r.warn===null)wh='<p class="hint">注意報・警報は読み取れませんでした　下のボタンで確かめてください</p>';
-  else if(!r.warn.length)wh=`<p class="wn0">${esc(P.c20n)}に　注意報・警報は出ていません</p>`;
+  else if(!r.warn.length)wh=`<p class="wn0"><span class="okdot"></span>${esc(P.c20n)}に　注意報・警報は出ていません</p>`;
   else wh=`<div class="wchips">${r.warn.map(x=>`<span class="wc l${x.lv}">${esc(x.n)}</span>`).join('')}</div>`;
-  const dh=(r.days||[]).map((d,i)=>{const dt=new Date(d.t),ds=d.t.slice(0,10),pp=(r.pops||[]).filter(x=>x.t.slice(0,10)===ds&&x.v!==''&&x.v!=null);
-    return `<div class="jd"><div class="jdh"><b>${['今日','明日','あさって'][i]||''}</b><small>${dt.getMonth()+1}/${dt.getDate()}（${W[dt.getDay()]}）</small></div><p class="jw">${esc(d.w.replace(/　+/g,' '))}</p>
-      ${pp.length?`<p class="js">降水確率　${pp.map(x=>`<span>${+x.t.slice(11,13)}時〜 ${esc(x.v)}%</span>`).join('')}</p>`:''}
-      ${d.wind?`<p class="js">風　${esc(d.wind.replace(/　+/g,' '))}</p>`:''}${d.wave?`<p class="js">波　${esc(d.wave.replace(/　+/g,' '))}</p>`:''}</div>`}).join('');
+  const SL=[0,6,12,18];
+  const dh=(r.days||[]).map((d,i)=>{const dt=new Date(d.t),ds=d.t.slice(0,10),wp=wParse(d.w);
+    const pops=SL.map(h=>{const x=(r.pops||[]).find(p=>p.t.slice(0,10)===ds&&+p.t.slice(11,13)===h);return x&&x.v!==''&&x.v!=null?+x.v:null});
+    const popH=pops.some(v=>v!=null)?`<div class="jb"><span class="jl">降水確率</span><div class="pops">${pops.map((v,k)=>`<div class="pp${v==null?' na':''}"><span class="pb"><i style="height:${v??0}%"></i></span><b>${v==null?'—':v+'%'}</b><small>${SL[k]}〜${SL[k]+6}時</small></div>`).join('')}</div></div>`:'';
+    const wd=windParse(d.wind),wv=waveParse(d.wave);
+    const windH=wd.out.length?`<div class="jb"><span class="jl">風</span><div class="wrow">${wd.out.map((x,k)=>`${k?'<span class="cn">のち</span>':''}<span class="wi s${x.st}">${arrowSvg(DIRS[x.d])}${esc(x.d)}${x.st?`<em>${STW[x.st]}</em>`:''}</span>`).join('')}${wd.sea>0?`<span class="wi s${wd.sea} sea">海上<em>${STW[wd.sea]}</em></span>`:''}</div></div>`:'';
+    const mx=Math.max(4,...wv.v);
+    const waveH=wv.v.length?`<div class="jb"><span class="jl">波</span><div class="wrow">${wv.v.map((v,k)=>`${k?'<span class="cn">のち</span>':''}<span class="wv"><i style="height:${Math.max(8,v/mx*100)}%;background:rgb(${colOf(v)})"></i><b>${v} m</b></span>`).join('')}${wv.u?'<span class="bd">うねり</span>':''}</div></div>`:'';
+    return `<div class="jd"><div class="jdh"><b>${['今日','明日','あさって'][i]||''}</b><small>${dt.getMonth()+1}/${dt.getDate()}（${W[dt.getDay()]}）</small></div>
+      <div class="jwx">${icon(wp.a)}${wp.b?`<span class="cn">${wp.cn}</span>${icon(wp.b)}`:''}${wp.bd.map(b=>`<span class="bd">${b}</span>`).join('')}</div>
+      <p class="jw">${esc(z2h(d.w))}</p>${popH}${windH}${waveH}</div>`}).join('');
   el.innerHTML=`<p class="ct">気象庁の予報<small>　${esc(P.c10n||'')}${rp?`　${rp.getDate()}日${rp.getHours()}時 ${esc(r.office||'')}発表`:''}</small></p>${wh}${dh}${jmaLinks(P)}`}
 
 function renderChips(){
