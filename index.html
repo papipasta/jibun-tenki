@@ -520,7 +520,8 @@ async function openNami(){
   NAMI.el.classList.add('open');
   try{await loadLibs()}catch(e){nmsg('地図を読みこめませんでした　通信を確かめてください');return}
   if(!NAMI.map){
-    const m=NAMI.map=L.map('nmap',{zoomControl:false,zoomSnap:.25,minZoom:4,maxZoom:9,maxBounds:[[14,108],[56,164]],preferCanvas:true});
+    const m=NAMI.map=L.map('nmap',{zoomControl:false,zoomSnap:.25,minZoom:4,maxZoom:9,maxBounds:[[22,121],[48.5,151]],maxBoundsViscosity:1,preferCanvas:true});
+    const fitMin=()=>m.setMinZoom(Math.max(4,m.getBoundsZoom([[24,124],[46,148]],false)-.25));fitMin();m.on('resize',fitMin);
     for(const [n,z] of [['wave',350],['flow',360],['lbl',450]]){m.createPane(n).style.zIndex=z;m.getPane(n).style.pointerEvents='none'}
     const at='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>・Natural Earth・<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>';
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',attribution:at}).addTo(m);
