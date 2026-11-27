@@ -38,10 +38,11 @@ button:disabled{opacity:.6}
 <script>
 {
 const P=${payload},K='jibun-tenki-key',u=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-async function open(key){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:u(P.i)},key,u(P.c));const h=new TextDecoder().decode(pt);document.open();document.write(h);document.close()}
+const ready=()=>document.readyState==='complete'?Promise.resolve():new Promise(r=>addEventListener('load',r,{once:true}));
+async function open(key){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:u(P.i)},key,u(P.c));const h=new TextDecoder().decode(pt);await ready();await new Promise(r=>setTimeout(r,0));document.open();document.write(h);document.close()}
 async function fromRaw(raw){return crypto.subtle.importKey('raw',u(raw),'AES-GCM',true,['decrypt'])}
 (async()=>{let raw=null;try{raw=localStorage.getItem(K)}catch(e){}
-  if(raw){try{await open(await fromRaw(raw));return}catch(e){try{localStorage.removeItem(K)}catch(_){}}}
+  if(raw){const F=document.getElementById('f');F.style.visibility='hidden';try{await open(await fromRaw(raw));return}catch(e){F.style.visibility='';try{localStorage.removeItem(K)}catch(_){}}}
   document.getElementById('p').focus()})();
 document.getElementById('f').addEventListener('submit',async ev=>{ev.preventDefault();const b=document.getElementById('b'),E=document.getElementById('e');
   b.disabled=true;b.textContent='確かめています…';E.textContent='';
