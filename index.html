@@ -103,24 +103,43 @@ main{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px max(14px,env(safe-ar
 textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);padding:8px;font-family:monospace}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:10px 16px;z-index:2000;display:none;width:max-content;max-width:calc(100% - 32px);text-align:center}
 /* 波の地図 */
-#nami{position:fixed;inset:0;z-index:8;background:var(--bg);display:none;flex-direction:column;height:100vh;height:100dvh}
+#nami{--nb:#0d1217;--nc:#161d24;--nl:#2a333d;--nt:#eef2f5;--ns:#9aa6b2;position:fixed;inset:0;z-index:8;background:var(--nb);color:var(--nt);display:none;flex-direction:column;height:100vh;height:100dvh}
 #nami.open{display:flex}
-.nbar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left))}
-.nbar h2{font:400 1.3rem/1.15 var(--title);margin:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nbar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left));background:var(--nc)}
+.nbar h2{font:400 1.25rem/1.15 var(--title);margin:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb{flex:0 0 auto;min-width:44px;height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--nl);background:transparent;color:var(--nt);display:grid;place-items:center;white-space:nowrap}
+.nb svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #nmapw{flex:1 1 auto;min-height:0;position:relative}
-#nmap{position:absolute;inset:0;background:#cfd8de}
-#ncv{position:absolute;inset:0;width:100%;height:100%;z-index:450;pointer-events:none;opacity:.66}
-#nwhen{position:absolute;top:10px;left:10px;z-index:900;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:6px 12px;font-weight:500;white-space:nowrap;pointer-events:none}
-#ninfo{position:absolute;left:10px;right:10px;bottom:10px;z-index:900;background:var(--card);border:1.5px solid var(--ink);border-radius:14px;padding:10px 12px;display:none;font-size:.92rem}
-#ninfo b{font-size:1.15rem;white-space:nowrap}
-#nmsg{position:absolute;inset:0;z-index:950;display:none;place-items:center;text-align:center;padding:20px;background:color-mix(in srgb,var(--bg) 80%,transparent)}
-.nctl{flex:0 0 auto;padding:8px max(12px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));border-top:1.5px solid var(--line);background:var(--card)}
-.leg{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:2px;font-size:.68rem;color:var(--sub);text-align:center}
-.leg i{display:block;height:10px;border-radius:2px;margin-bottom:2px}
-.leg span{white-space:nowrap}
-.nrow{display:flex;align-items:center;gap:6px;margin-top:8px}
-#nrange{flex:1 1 auto;height:44px;margin:0;accent-color:var(--ac)}
-.leaflet-container{font-family:var(--body)}
+#nmap{position:absolute;inset:0;background:var(--nb)}
+.leaflet-container{font-family:var(--body);background:var(--nb)}
+.leaflet-control-attribution{background:rgba(13,18,23,.7)!important;color:#aab4be!important;font-size:10px}
+.leaflet-control-attribution a{color:#d0d8e0!important}
+#nwhen{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:900;background:rgba(13,18,23,.82);border:1px solid var(--nl);border-radius:20px;padding:6px 16px;font-weight:500;white-space:nowrap;pointer-events:none;font-size:1.05rem}
+#nwhen small{color:var(--ns);font-size:.8em;margin-left:6px}
+.nleg{position:absolute;right:10px;top:58px;z-index:900;background:rgba(13,18,23,.82);border:1px solid var(--nl);border-radius:10px;padding:6px 8px 4px;pointer-events:none;width:140px}
+.nleg i{display:block;height:8px;border-radius:4px}
+.nleg div{display:flex;justify-content:space-between;font-size:.68rem;color:var(--ns);margin-top:2px}
+#ncard{position:absolute;left:10px;right:10px;bottom:10px;z-index:900;max-width:520px;margin:0 auto;background:rgba(22,29,36,.95);border:1px solid var(--nl);border-radius:16px;padding:12px 14px 8px;display:none}
+.cardh{display:flex;align-items:flex-start;gap:8px}
+.cardh .nm{flex:1 1 auto;font-size:.85rem;color:var(--ns);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-top:2px}
+.cardh button{flex:0 0 auto;width:40px;height:40px;margin:-10px -10px 0 0;border:0;border-radius:10px;background:transparent;color:var(--nt);font-size:1.1rem}
+.cardv{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 14px}
+.cardv b{font:400 2rem/1.1 var(--title);white-space:nowrap}
+.cardv span{color:var(--ns);white-space:nowrap;font-size:.9rem}
+#nspark{display:block;width:100%;height:70px;margin-top:6px;touch-action:none}
+#nmsg{position:absolute;inset:0;z-index:950;display:none;place-items:center;text-align:center;padding:20px;background:rgba(13,18,23,.8)}
+.nctl{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:6px max(14px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:var(--nc);border-top:1px solid var(--nl)}
+#nPlay{width:48px;height:48px;border-radius:50%;border:0;background:var(--nt);color:var(--nb);font-size:1.1rem;flex:0 0 auto}
+#ntrack{flex:1 1 auto;position:relative;height:52px;touch-action:none;cursor:pointer;outline:none}
+#ntrack:focus-visible{box-shadow:0 0 0 2px var(--nt);border-radius:8px}
+#ndays{position:absolute;left:0;right:0;top:4px;height:20px}
+#ndays span{position:absolute;top:0;font-size:.78rem;color:var(--ns);white-space:nowrap;padding-left:4px;border-left:1px solid var(--nl);overflow:hidden}
+#ndays span.td{color:var(--nt)}
+#nbar{position:absolute;left:0;right:0;top:32px;height:6px;border-radius:3px;background:var(--nl)}
+#nfill{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#5fb3ff}
+#nthumb{position:absolute;top:24px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:var(--nt);border:3px solid #5fb3ff;pointer-events:none}
+@media (max-height:520px){#ncard{max-width:340px;left:10px;right:auto;margin:0;padding:8px 12px 6px}.cardv b{font-size:1.5rem}#nspark{height:46px}.nleg{top:10px;left:10px;right:auto}}
+#nnow{position:absolute;top:28px;width:2px;height:14px;margin-left:-1px;background:#ffd34d;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.tg::after{transition:none}}
 @media (max-width:360px){.wk{grid-template-columns:3em 26px 2.6em 2.4em minmax(24px,1fr) 2.4em;gap:4px}.wk svg{width:26px;height:26px}}
 </style>
@@ -166,12 +185,14 @@ textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5
   </div>
 </div></div>
 <section id="nami" aria-label="波の地図">
-  <div class="nbar"><button class="btn g" id="nBack">もどる</button><h2>波の予想</h2><button class="ib" id="nRe" aria-label="更新"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button></div>
-  <div id="nmapw"><div id="nmap"></div><canvas id="ncv"></canvas><div id="nwhen">—</div><div id="ninfo"></div><div id="nmsg"></div></div>
-  <div class="nctl">
-    <div class="leg" id="nleg"></div>
-    <div class="nrow"><button class="sm" id="nPlay" aria-label="再生">▶</button><button class="sm" id="nPrev" aria-label="3時間前">−</button><input type="range" id="nrange" min="0" max="0" value="0" aria-label="時刻"><button class="sm" id="nNext" aria-label="3時間後">＋</button></div>
-  </div>
+  <div class="nbar"><button class="nb" id="nBack" aria-label="天気にもどる"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2>波の予想</h2><button class="nb" id="nRe" aria-label="更新"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button></div>
+  <div id="nmapw"><div id="nmap"></div>
+    <div id="nwhen">—</div>
+    <div class="nleg"><i id="nlegbar"></i><div></div></div>
+    <div id="ncard" role="region" aria-label="地点の波"><div class="cardh"><span class="nm" id="ncname"></span><button id="ncx" aria-label="とじる">✕</button></div><div class="cardv" id="ncv"></div><svg id="nspark" aria-hidden="true"></svg></div>
+    <div id="nmsg"></div></div>
+  <div class="nctl"><button id="nPlay" aria-label="再生">▶</button>
+    <div id="ntrack" tabindex="0" role="slider" aria-label="時刻"><div id="ndays"></div><div id="nbar"><div id="nfill"></div></div><div id="nnow"></div><div id="nthumb"></div></div></div>
 </section>
 <div id="toast"></div>
 
@@ -342,18 +363,23 @@ let tt;function toast(m){const t=$('#toast');t.textContent=m;t.style.display='bl
 
 
 /* ===== 波の地図 ===== */
-const NAMI={el:$('#nami'),map:null,data:null,idx:[],k:0,play:null};
+const NAMI={el:$('#nami'),map:null,data:null,t:0,t0:0,play:null,pick:null,land:null,parts:[],moving:false,raf:0,anim:0,uv:{}};
 const LAT0=46,LAT1=24,LON0=124,LON1=148,NY=LAT0-LAT1+1,NX=LON1-LON0+1;
-const EDGES=[.5,1,1.5,2,2.5,3,3.5,4,4.5];
-const COLS=['#1a237e','#1f4fd1','#3b8fe8','#27c3d3','#22b14c','#cbc51e','#e0791b','#d92bc8','#d9748a','#c81e1e'];
-const RGB=COLS.map(c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)));
-const LBL=['〜0.5','0.5','1','1.5','2','2.5','3','3.5','4','4.5〜'];
-$('#nleg').innerHTML=COLS.map((c,i)=>`<div><i style="background:${c}"></i><span>${LBL[i]}</span></div>`).join('');
-const bin=v=>{let i=0;while(i<9&&v>=EDGES[i])i++;return i};
-function loadLeaflet(){return new Promise((ok,ng)=>{if(window.L)return ok();
-  const l=document.createElement('link');l.rel='stylesheet';l.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';document.head.appendChild(l);
-  const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';sc.onload=ok;sc.onerror=ng;document.head.appendChild(sc)})}
-function nmsg(t,btn){const m=$('#nmsg');if(!t){m.style.display='none';return}m.style.display='grid';m.innerHTML=`<div>${esc(t)}${btn?'<br><button class="btn" id="nTry" style="margin-top:12px">もう一度</button>':''}</div>`;if(btn)$('#nTry').onclick=()=>namiFetch(true)}
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const STOPS=[[0,[24,38,110]],[.5,[33,87,190]],[1,[40,140,215]],[1.5,[38,190,200]],[2,[60,190,110]],[2.5,[160,210,60]],[3,[240,210,60]],[4,[240,150,45]],[5,[225,70,60]],[6,[195,50,140]],[8,[120,40,160]]];
+const LUT=[];for(let i=0;i<=800;i++){const v=i/100;let k=0;while(k<STOPS.length-2&&v>STOPS[k+1][0])k++;const [a,ca]=STOPS[k],[b,cb]=STOPS[k+1],f=Math.max(0,Math.min(1,(v-a)/(b-a)));LUT.push(ca.map((c,j)=>Math.round(c+(cb[j]-c)*f)))}
+const colOf=v=>LUT[Math.max(0,Math.min(800,Math.round(v*100)))];
+$('#nlegbar').style.background='linear-gradient(90deg,'+[0,.5,1,1.5,2,2.5,3,4,5,6].map(v=>`rgb(${colOf(v)}) ${(v/6*100).toFixed(1)}%`).join(',')+')';
+$('.nleg div').innerHTML='<span>0</span><span>2</span><span>4</span><span>6 m</span>';
+const WD='日月火水木金土';
+function loadLibs(){return Promise.all([
+  new Promise((ok,ng)=>{if(window.L)return ok();
+    const l=document.createElement('link');l.rel='stylesheet';l.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';document.head.appendChild(l);
+    const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';sc.onload=ok;sc.onerror=ng;document.head.appendChild(sc)}),
+  NAMI.land?0:fetch('land-jp.json').then(r=>r.json()).then(a=>{NAMI.land=a.map(p=>{let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(let k=0;k<p.length;k+=2){x0=Math.min(x0,p[k]);x1=Math.max(x1,p[k]);y0=Math.min(y0,p[k+1]);y1=Math.max(y1,p[k+1])}return{p,bb:[x0,y0,x1,y1]}})})])}
+function nmsg(t,btn){const m=$('#nmsg');if(!t){m.style.display='none';return}m.style.display='grid';m.innerHTML=`<div>${esc(t)}${btn?'<br><button class="nb" id="nTry" style="margin:12px auto 0">もう一度</button>':''}</div>`;if(btn)$('#nTry').onclick=()=>namiFetch(true)}
+
+/* データ */
 async function namiFetch(force){
   const c=load('jibun-tenki-nami');
   if(!force&&c&&Date.now()-c.at<60*60e3){NAMI.data=c;namiReady();return}
@@ -365,68 +391,154 @@ async function namiFetch(force){
       if(!r.ok)throw 0;let d=await r.json();if(!Array.isArray(d))d=[d];out.push(...d)}
     const time=out[0].hourly.time,T=time.length,r2=v=>v==null?null:Math.round(v*100)/100;
     const h=[],dr=[],pr=[];for(let t=0;t<T;t++){h.push(out.map(o=>r2(o.hourly.wave_height[t])));dr.push(out.map(o=>o.hourly.wave_direction[t]==null?null:Math.round(o.hourly.wave_direction[t])));pr.push(out.map(o=>r2(o.hourly.wave_period[t])))}
-    NAMI.data={at:Date.now(),time,h,dr,pr};save('jibun-tenki-nami',NAMI.data);namiReady()}
+    NAMI.data={at:Date.now(),time,h,dr,pr};NAMI.uv={};save('jibun-tenki-nami',NAMI.data);namiReady()}
   catch(e){if(c){NAMI.data=c;namiReady();toast('更新できませんでした　前回のデータを表示しています')}else nmsg('波のデータを取得できませんでした　通信を確かめてください',1)}}
-function namiReady(){nmsg('');const tm=NAMI.data.time,nowS=new Date(Date.now()+9*3600e3).toISOString().slice(0,13);
-  let i0=tm.findIndex(t=>t.slice(0,13)>=nowS);if(i0<0)i0=0;NAMI.idx=[];for(let i=i0;i<tm.length;i+=3)NAMI.idx.push(i);
-  const R=$('#nrange');R.max=NAMI.idx.length-1;NAMI.k=Math.min(NAMI.k,NAMI.idx.length-1);R.value=NAMI.k;namiDraw()}
-/* 格子の値（陸は null） */
+function namiReady(){nmsg('');NAMI.uv={};const tm=NAMI.data.time,nowS=new Date(Date.now()+9*3600e3).toISOString().slice(0,13);
+  let i0=tm.findIndex(t=>t.slice(0,13)>=nowS);if(i0<0)i0=0;NAMI.t0=i0;buildTrack();setT(i0);layout();
+  if(!NAMI.pick){const p=S.places[S.cur];if(p)showCard({lat:p.lat,lng:p.lon},p.n+' 付近の海')}}
+
+/* 格子の値（範囲外は null） */
 const gv=(a,y,x)=>(y<0||y>=NY||x<0||x>=NX)?null:a[y*NX+x];
-function sample(a,lat,lon){const fy=LAT0-lat,fx=lon-LON0,y=Math.floor(fy),x=Math.floor(fx),ty=fy-y,tx=fx-x;
+function samp(a,lat,lon){const fy=LAT0-lat,fx=lon-LON0,y=Math.floor(fy),x=Math.floor(fx),ty=fy-y,tx=fx-x;
   const c=[[gv(a,y,x),(1-tx)*(1-ty)],[gv(a,y,x+1),tx*(1-ty)],[gv(a,y+1,x),(1-tx)*ty],[gv(a,y+1,x+1),tx*ty]];
-  let s=0,w=0;for(const [v,k] of c)if(v!=null){s+=v*k;w+=k}return w>.2?s/w:null}
+  let s=0,w=0;for(const [v,k] of c)if(v!=null){s+=v*k;w+=k}return w>.15?s/w:null}
+function sampT(A,t,lat,lon){const a=Math.floor(t),b=Math.min(A.length-1,a+1),f=t-a,va=samp(A[a],lat,lon);if(f<.01||va==null)return va;const vb=samp(A[b],lat,lon);return vb==null?va:va+(vb-va)*f}
 function nearest(a,lat,lon){const y=Math.round(LAT0-lat),x=Math.round(lon-LON0);let best=null,bd=9;
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const v=gv(a,y+dy,x+dx),d=dy*dy+dx*dx;if(v!=null&&d<bd){bd=d;best=v}}return best}
-const off=document.createElement('canvas'),SC=3;let raf=0;
-function namiDraw(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;namiPaint()})}
-function namiPaint(){
-  const m=NAMI.map,cv=$('#ncv');if(!m||!NAMI.data)return;
-  const W=cv.clientWidth,H=cv.clientHeight,dpr=Math.min(2,devicePixelRatio||1);
-  cv.width=W*dpr;cv.height=H*dpr;const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
-  const t=NAMI.idx[NAMI.k],hh=NAMI.data.h[t],dd=NAMI.data.dr[t];
-  const w=Math.ceil(W/SC),h=Math.ceil(H/SC);off.width=w;off.height=h;const o=off.getContext('2d'),img=o.createImageData(w,h),px=img.data;
-  for(let j=0;j<h;j++){const ll0=m.containerPointToLatLng([0,j*SC+SC/2]);
-    for(let i=0;i<w;i++){const lon=m.containerPointToLatLng([i*SC+SC/2,j*SC+SC/2]).lng,v=sample(hh,ll0.lat,lon);
-      if(v==null)continue;const c=RGB[bin(v)],q=(j*w+i)*4;px[q]=c[0];px[q+1]=c[1];px[q+2]=c[2];px[q+3]=255}}
-  o.putImageData(img,0,0);g.imageSmoothingEnabled=false;g.drawImage(off,0,0,w*SC,h*SC);
-  /* 波向の矢印（波の進む向き） */
-  const a=m.latLngToContainerPoint([35,135]),b=m.latLngToContainerPoint([35,136]),sp=Math.max(1,b.x-a.x),st=Math.max(1,Math.ceil(30/sp));
-  g.strokeStyle='rgba(20,20,20,.75)';g.lineWidth=1.5;g.lineCap='round';
-  for(let y=0;y<NY;y+=st)for(let x=0;x<NX;x+=st){const d=dd[y*NX+x];if(d==null)continue;
-    const p=m.latLngToContainerPoint([LAT0-y,LON0+x]);if(p.x<-10||p.y<-10||p.x>W+10||p.y>H+10)continue;
-    const r=(d+180)*Math.PI/180,L=Math.min(14,sp*st*.4),dx=Math.sin(r)*L,dy=-Math.cos(r)*L;
-    g.beginPath();g.moveTo(p.x-dx/2,p.y-dy/2);g.lineTo(p.x+dx/2,p.y+dy/2);
-    const hx=p.x+dx/2,hy=p.y+dy/2,ang=Math.atan2(dy,dx);
-    g.lineTo(hx-5*Math.cos(ang-.5),hy-5*Math.sin(ang-.5));g.moveTo(hx,hy);g.lineTo(hx-5*Math.cos(ang+.5),hy-5*Math.sin(ang+.5));g.stroke()}
-  const tm=NAMI.data.time[t],dt=new Date(tm+':00');
-  $('#nwhen').textContent=`${dt.getMonth()+1}/${dt.getDate()}（${'日月火水木金土'[dt.getDay()]}）${+tm.slice(11,13)}時`;
-  if(NAMI.pick)namiInfo(NAMI.pick)}
+function uvAt(t){t=Math.round(t);if(NAMI.uv[t])return NAMI.uv[t];const d=NAMI.data.dr[t],U=new Float32Array(d.length),V=new Float32Array(d.length),ok=new Uint8Array(d.length);
+  d.forEach((v,i)=>{if(v!=null){const r=(v+180)*Math.PI/180;U[i]=Math.sin(r);V[i]=Math.cos(r);ok[i]=1}});return NAMI.uv[t]={U,V,ok}}
+function vec(t,lat,lon){const g=uvAt(t),fy=LAT0-lat,fx=lon-LON0,y=Math.floor(fy),x=Math.floor(fx),ty=fy-y,tx=fx-x;let u=0,v=0,w=0;
+  for(const [yy,xx,k] of [[y,x,(1-tx)*(1-ty)],[y,x+1,tx*(1-ty)],[y+1,x,(1-tx)*ty],[y+1,x+1,tx*ty]]){if(yy<0||yy>=NY||xx<0||xx>=NX)continue;const i=yy*NX+xx;if(!g.ok[i])continue;u+=g.U[i]*k;v+=g.V[i]*k;w+=k}
+  return w>.15?[u/w,v/w]:null}
+function onLandLL(lat,lng){let n=0;for(const r of NAMI.land||[]){const b=r.bb;if(lng<b[0]||lng>b[2]||lat<b[1]||lat>b[3])continue;const p=r.p;
+  for(let i=0,j=p.length-2;i<p.length;j=i,i+=2){const yi=p[i+1],yj=p[j+1];if((yi>lat)!==(yj>lat)&&lng<(p[j]-p[i])*(lat-yi)/(yj-yi)+p[i])n++}}return n%2===1}
+
+/* 描画 */
+let CW,CF;const OFF=document.createElement('canvas'),MK=document.createElement('canvas');
+function layout(){
+  const m=NAMI.map;if(!m||!NAMI.data||!NAMI.land)return;
+  const sz=m.getSize(),W=sz.x,H=sz.y,dpr=Math.min(2,devicePixelRatio||1),tl=m.containerPointToLayerPoint([0,0]);
+  for(const c of [CW,CF]){L.DomUtil.setPosition(c,tl);c.style.width=W+'px';c.style.height=H+'px';c.width=W*dpr;c.height=H*dpr;c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);c.style.visibility=''}
+  NAMI.W=W;NAMI.H=H;NAMI.latY=new Float32Array(H);NAMI.lngX=new Float32Array(W);
+  for(let y=0;y<H;y++)NAMI.latY[y]=m.containerPointToLatLng([0,y]).lat;for(let x=0;x<W;x++)NAMI.lngX[x]=m.containerPointToLatLng([x,0]).lng;
+  const P=new Path2D(),b=m.getBounds().pad(.15),bw=b.getWest(),be=b.getEast(),bs=b.getSouth(),bn=b.getNorth();
+  for(const r of NAMI.land){const q=r.bb;if(q[2]<bw||q[0]>be||q[3]<bs||q[1]>bn)continue;const p=r.p;
+    for(let k=0;k<p.length;k+=2){const c=m.latLngToContainerPoint([p[k+1],p[k]]);k?P.lineTo(c.x,c.y):P.moveTo(c.x,c.y)}P.closePath()}
+  NAMI.path=P;
+  MK.width=Math.ceil(W/4);MK.height=Math.ceil(H/4);const mg=MK.getContext('2d');mg.setTransform(.25,0,0,.25,0,0);mg.fillStyle='#000';mg.fill(P);
+  NAMI.mask={w:MK.width,d:mg.getImageData(0,0,MK.width,MK.height).data};
+  field();resetParts()}
+function field(){
+  const m=NAMI.map;if(!m||!NAMI.latY)return;const W=NAMI.W,H=NAMI.H,g=CW.getContext('2d'),D=NAMI.data,t=NAMI.t;
+  const S2=2,w=Math.ceil(W/S2),h=Math.ceil(H/S2);OFF.width=w;OFF.height=h;const o=OFF.getContext('2d'),img=o.createImageData(w,h),px=img.data;
+  const a=Math.floor(t),b2=Math.min(D.h.length-1,a+1),f=t-a,A=D.h[a],B=D.h[b2];
+  for(let j=0;j<h;j++){const lat=NAMI.latY[Math.min(H-1,j*S2)];
+    for(let i=0;i<w;i++){const lng=NAMI.lngX[Math.min(W-1,i*S2)];let v=samp(A,lat,lng);if(v==null)continue;
+      if(f>.01){const v2=samp(B,lat,lng);if(v2!=null)v+=(v2-v)*f}
+      const c=colOf(v),q=(j*w+i)*4;px[q]=c[0];px[q+1]=c[1];px[q+2]=c[2];px[q+3]=230}}
+  o.putImageData(img,0,0);g.clearRect(0,0,W,H);g.imageSmoothingEnabled=true;g.drawImage(OFF,0,0,w*S2,h*S2);
+  g.globalCompositeOperation='destination-out';g.fill(NAMI.path);g.globalCompositeOperation='source-over';
+  g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=.8;g.stroke(NAMI.path);
+  if(RM)arrows(g,W,H);
+  renderCard()}
+function arrows(g,W,H){const m=NAMI.map,st=Math.max(1,Math.ceil(36/Math.max(1,m.latLngToContainerPoint([35,136]).x-m.latLngToContainerPoint([35,135]).x)));
+  g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=1.4;g.lineCap='round';
+  for(let y=0;y<NY;y+=st)for(let x=0;x<NX;x+=st){const p=m.latLngToContainerPoint([LAT0-y,LON0+x]);if(p.x<0||p.y<0||p.x>W||p.y>H||landPx(p.x,p.y))continue;const v=vec(NAMI.t,LAT0-y,LON0+x);if(!v)continue;
+    const dx=v[0]*12,dy=-v[1]*12,hx=p.x+dx/2,hy=p.y+dy/2,an=Math.atan2(dy,dx);g.beginPath();g.moveTo(p.x-dx/2,p.y-dy/2);g.lineTo(hx,hy);g.lineTo(hx-5*Math.cos(an-.5),hy-5*Math.sin(an-.5));g.moveTo(hx,hy);g.lineTo(hx-5*Math.cos(an+.5),hy-5*Math.sin(an+.5));g.stroke()}}
+const landPx=(x,y)=>{const M=NAMI.mask;if(!M)return false;const i=((y>>2)*M.w+(x>>2))*4+3;return M.d[i]>0};
+
+/* 流れる線（波の進む向き） */
+function spawn(p){for(let k=0;k<12;k++){const x=Math.random()*NAMI.W,y=Math.random()*NAMI.H;if(!landPx(x|0,y|0)&&vec(NAMI.t,NAMI.latY[y|0],NAMI.lngX[x|0])){p.x=x;p.y=y;p.a=Math.random()*70|0;return p}}p.x=-1;p.a=0;return p}
+function resetParts(){if(RM)return;const N=Math.min(1100,Math.round(NAMI.W*NAMI.H/300));NAMI.parts=Array.from({length:N},()=>spawn({}));CF.getContext('2d').clearRect(0,0,NAMI.W,NAMI.H);if(!NAMI.anim)NAMI.anim=requestAnimationFrame(frame)}
+function frame(){NAMI.anim=0;if(!NAMI.el.classList.contains('open')||document.hidden||RM)return;
+  if(!NAMI.moving&&NAMI.latY){const g=CF.getContext('2d'),W=NAMI.W,H=NAMI.H,D=NAMI.data;
+    g.globalCompositeOperation='destination-in';g.fillStyle='rgba(0,0,0,.9)';g.fillRect(0,0,W,H);g.globalCompositeOperation='source-over';
+    g.strokeStyle='rgba(255,255,255,.6)';g.lineWidth=1.1;g.beginPath();
+    for(const p of NAMI.parts){if(p.x<0){spawn(p);continue}
+      const lat=NAMI.latY[p.y|0],lng=NAMI.lngX[p.x|0],v=vec(NAMI.t,lat,lng);if(!v){spawn(p);continue}
+      const hh=samp(D.h[Math.round(NAMI.t)],lat,lng)||0,sp=.45+.22*Math.min(6,hh),nx=p.x+v[0]*sp,ny=p.y-v[1]*sp;
+      g.moveTo(p.x,p.y);g.lineTo(nx,ny);p.x=nx;p.y=ny;
+      if(++p.a>90||nx<0||ny<0||nx>=W||ny>=H||landPx(nx|0,ny|0))spawn(p)}
+    g.stroke()}
+  NAMI.anim=requestAnimationFrame(frame)}
+
+/* 時間のつまみ */
+const tr=$('#ntrack');
+function buildTrack(){const tm=NAMI.data.time,N=tm.length,today=tm[NAMI.t0].slice(0,10);let h='';
+  for(let i=0;i<N;i++){if(i&&tm[i].slice(11,13)!=='00')continue;let j=i+1;while(j<N&&tm[j].slice(11,13)!=='00')j++;
+    const d=new Date(tm[i].slice(0,10)+'T00:00'),l=i/(N-1)*100,w=(Math.min(j,N-1)-i)/(N-1)*100;
+    h+=`<span class="${tm[i].slice(0,10)===today?'td':''}" style="left:${l}%;width:${w}%">${WD[d.getDay()]} ${d.getDate()}</span>`}
+  $('#ndays').innerHTML=h;for(const sp of $('#ndays').children){if(sp.scrollWidth>sp.clientWidth+1)sp.textContent=sp.textContent.split(' ')[1];if(sp.scrollWidth>sp.clientWidth+1)sp.textContent=''}$('#nnow').style.left=NAMI.t0/(N-1)*100+'%';tr.setAttribute('aria-valuemin',0);tr.setAttribute('aria-valuemax',N-1)}
+function setT(t){const D=NAMI.data;if(!D)return;const N=D.time.length;NAMI.t=Math.max(0,Math.min(N-1,t));const pc=NAMI.t/(N-1)*100;
+  $('#nthumb').style.left=pc+'%';$('#nfill').style.width=pc+'%';
+  const tm=D.time[Math.round(NAMI.t)],d=new Date(tm+':00'),dh=Math.round(NAMI.t)-NAMI.t0;
+  const txt=`${d.getMonth()+1}/${d.getDate()}（${WD[d.getDay()]}）${+tm.slice(11,13)}時`;
+  $('#nwhen').innerHTML=esc(txt)+`<small>${dh===0?'いま':(dh>0?dh+'時間後':(-dh)+'時間前')}</small>`;
+  tr.setAttribute('aria-valuenow',Math.round(NAMI.t));tr.setAttribute('aria-valuetext',txt);
+  if(!NAMI.raf)NAMI.raf=requestAnimationFrame(()=>{NAMI.raf=0;field()})}
+let drag=false;
+const tAt=e=>{const r=tr.getBoundingClientRect();return Math.round(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*(NAMI.data.time.length-1))};
+tr.addEventListener('pointerdown',e=>{if(!NAMI.data)return;drag=true;tr.setPointerCapture(e.pointerId);stopPlay();setT(tAt(e))});
+tr.addEventListener('pointermove',e=>{if(drag)setT(tAt(e))});
+tr.addEventListener('pointerup',()=>drag=false);tr.addEventListener('pointercancel',()=>drag=false);
+tr.addEventListener('keydown',e=>{const k={ArrowRight:1,ArrowLeft:-1,ArrowUp:3,ArrowDown:-3,PageUp:24,PageDown:-24}[e.key];if(k){e.preventDefault();stopPlay();setT(Math.round(NAMI.t)+k)}});
+function stopPlay(){clearInterval(NAMI.play);NAMI.play=null;$('#nPlay').textContent='▶';$('#nPlay').setAttribute('aria-label','再生')}
+$('#nPlay').onclick=()=>{if(NAMI.play){stopPlay();return}if(!NAMI.data)return;$('#nPlay').textContent='❚❚';$('#nPlay').setAttribute('aria-label','停止');
+  NAMI.play=setInterval(()=>{const N=NAMI.data.time.length;setT(Math.round(NAMI.t)+1>=N?NAMI.t0:Math.round(NAMI.t)+1)},160)};
+
+/* 地点のカード */
 const DIR16=['北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
-function namiInfo(ll){NAMI.pick=ll;const t=NAMI.idx[NAMI.k],D=NAMI.data,v=sample(D.h[t],ll.lat,ll.lng),box=$('#ninfo');box.style.display='block';
-  if(v==null){box.innerHTML='ここは陸か、予想の範囲外です';return}
-  const d=nearest(D.dr[t],ll.lat,ll.lng),p=nearest(D.pr[t],ll.lat,ll.lng);
-  box.innerHTML=`波の高さ <b>${v.toFixed(1)} m</b>　${d!=null?DIR16[Math.round(d/22.5)%16]+'から':''}${p!=null?'　周期 '+p.toFixed(0)+' 秒':''}`}
+function seaNear(ll){if(!onLandLL(ll.lat,ll.lng))return ll;for(let r=.1;r<=1.2;r+=.1)for(let a=0;a<16;a++){const q={lat:ll.lat+r*Math.cos(a*Math.PI/8),lng:ll.lng+r*1.3*Math.sin(a*Math.PI/8)};if(!onLandLL(q.lat,q.lng)&&samp(NAMI.data.h[0],q.lat,q.lng)!=null)return q}return null}
+function showCard(ll,name){if(!NAMI.data||!NAMI.land)return;const sea=seaNear(ll);
+  NAMI.pick=sea?{ll:sea,name:name||(sea===ll?`北緯 ${ll.lat.toFixed(1)}° 東経 ${ll.lng.toFixed(1)}°`:'近くの海')}:{ll,name:'陸の上です',none:1};
+  if(NAMI.pin)NAMI.pin.remove();NAMI.pin=L.circleMarker([NAMI.pick.ll.lat,NAMI.pick.ll.lng],{radius:7,color:'#fff',weight:2.5,fillColor:'#0d1217',fillOpacity:1,interactive:false}).addTo(NAMI.map);
+  $('#ncard').style.display='block';renderCard()}
+function renderCard(){const P=NAMI.pick;if(!P||!NAMI.data)return;const D=NAMI.data,ll=P.ll,t=Math.round(NAMI.t);
+  $('#ncname').textContent=P.name;
+  if(P.none){$('#ncv').innerHTML='<span>海の上をタップすると　その場所の波が見られます</span>';$('#nspark').innerHTML='';return}
+  const v=samp(D.h[t],ll.lat,ll.lng),d=nearest(D.dr[t],ll.lat,ll.lng),p=nearest(D.pr[t],ll.lat,ll.lng);
+  $('#ncv').innerHTML=v==null?'<span>予想の範囲外です</span>':`<b>${v.toFixed(1)} m</b>${d!=null?`<span>${DIR16[Math.round(d/22.5)%16]}から</span>`:''}${p!=null?`<span>周期 ${p.toFixed(0)} 秒</span>`:''}`;
+  spark()}
+function spark(){const P=NAMI.pick,D=NAMI.data,sv=$('#nspark'),W=sv.clientWidth||300,H=sv.clientHeight||70,N=D.time.length,top=14,bot=H-2;
+  const ser=D.h.map(a=>samp(a,P.ll.lat,P.ll.lng));const mx=Math.max(1,...ser.filter(v=>v!=null));const ymax=Math.ceil(mx);
+  const X=i=>i/(N-1)*W,Y=v=>bot-(v/ymax)*(bot-top);let line='',first=true;
+  ser.forEach((v,i)=>{if(v==null){first=true;return}line+=(first?'M':'L')+X(i).toFixed(1)+' '+Y(v).toFixed(1);first=false});
+  let im=0;ser.forEach((v,i)=>{if(v!=null&&v>(ser[im]??-1))im=i});
+  let grid='';D.time.forEach((tm,i)=>{if(i&&tm.slice(11,13)==='00')grid+=`<line x1="${X(i)}" x2="${X(i)}" y1="${top}" y2="${bot}" stroke="#2a333d"/>`});
+  const tdm=D.time[im],dm=new Date(tdm+':00');
+  sv.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  sv.innerHTML=`<defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fb3ff" stop-opacity=".45"/><stop offset="1" stop-color="#5fb3ff" stop-opacity="0"/></linearGradient></defs>${grid}
+    <path d="${line} L${W} ${bot} L0 ${bot}Z" fill="url(#sg)" stroke="none"/><path d="${line}" fill="none" stroke="#5fb3ff" stroke-width="2" stroke-linejoin="round"/>
+    <line x1="${X(NAMI.t0)}" x2="${X(NAMI.t0)}" y1="${top}" y2="${bot}" stroke="#ffd34d" stroke-width="1.5"/>
+    <line x1="${X(NAMI.t)}" x2="${X(NAMI.t)}" y1="${top-4}" y2="${bot}" stroke="#eef2f5" stroke-width="2"/>
+    <text x="0" y="10" fill="#9aa6b2" font-size="11">5日間の最大 ${(ser[im]??0).toFixed(1)} m（${WD[dm.getDay()]} ${+tdm.slice(11,13)}時）</text>`}
+$('#nspark').addEventListener('pointerdown',e=>{const r=e.currentTarget.getBoundingClientRect();stopPlay();setT(Math.round((e.clientX-r.left)/r.width*(NAMI.data.time.length-1)))});
+$('#ncx').onclick=()=>{$('#ncard').style.display='none';NAMI.pick=null;if(NAMI.pin){NAMI.pin.remove();NAMI.pin=null}};
+
+/* 開く・閉じる */
 async function openNami(){
   NAMI.el.classList.add('open');
-  try{await loadLeaflet()}catch(e){nmsg('地図を読みこめませんでした　通信を確かめてください');return}
+  try{await loadLibs()}catch(e){nmsg('地図を読みこめませんでした　通信を確かめてください');return}
   if(!NAMI.map){
-    const m=NAMI.map=L.map('nmap',{zoomControl:false,zoomSnap:.25,attributionControl:true,minZoom:4,maxZoom:9,maxBounds:[[18,112],[52,160]]});
-    L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png',{attribution:'<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>・<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>',maxZoom:9}).addTo(m);
+    const m=NAMI.map=L.map('nmap',{zoomControl:false,zoomSnap:.25,minZoom:4,maxZoom:9,maxBounds:[[14,108],[56,164]],preferCanvas:true});
+    for(const [n,z] of [['wave',350],['flow',360],['lbl',450]]){m.createPane(n).style.zIndex=z;m.getPane(n).style.pointerEvents='none'}
+    const at='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>・Natural Earth・<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>';
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',attribution:at}).addTo(m);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',pane:'lbl'}).addTo(m);
     m.attributionControl.setPrefix(false);
-    m.fitBounds([[30.5,129],[45.5,145.5]],{padding:[4,4]});
-    const p=S.places[S.cur];if(p)L.circleMarker([p.lat,p.lon],{radius:6,color:'#fff',weight:2,fillColor:'#222',fillOpacity:1}).addTo(m);
-    m.on('move zoom resize',namiDraw);m.on('click',e=>namiInfo(e.latlng));
-  }else NAMI.map.invalidateSize();
+    CW=L.DomUtil.create('canvas','',m.getPane('wave'));CF=L.DomUtil.create('canvas','',m.getPane('flow'));
+    const p=S.places[S.cur];if(p)m.setView([Math.min(44,Math.max(28,p.lat)),Math.min(146,Math.max(126,p.lon))],6);else m.fitBounds([[30.5,129],[45.5,145.5]]);
+    m.on('movestart',()=>{NAMI.moving=true});
+    m.on('zoomstart',()=>{for(const c of [CW,CF])c.style.visibility='hidden'});
+    m.on('moveend resize',()=>{NAMI.moving=false;layout()});
+    m.on('click',e=>showCard(e.latlng));
+  }else{NAMI.map.invalidateSize();layout()}
   if(location.hash!=='#nami')history.replaceState(null,'','#nami');
   namiFetch()}
 function closeNami(){NAMI.el.classList.remove('open');stopPlay();if(location.hash==='#nami')history.replaceState(null,'',location.pathname+location.search)}
-function setK(k){const n=NAMI.idx.length;if(!n)return;NAMI.k=(k+n)%n;$('#nrange').value=NAMI.k;namiDraw()}
-function stopPlay(){clearInterval(NAMI.play);NAMI.play=null;$('#nPlay').textContent='▶';$('#nPlay').setAttribute('aria-label','再生')}
 $('#bNami').onclick=openNami;$('#nBack').onclick=closeNami;$('#nRe').onclick=()=>namiFetch(true);
-$('#nrange').oninput=e=>{stopPlay();setK(+e.target.value)};
-$('#nPrev').onclick=()=>{stopPlay();setK(NAMI.k-1)};$('#nNext').onclick=()=>{stopPlay();setK(NAMI.k+1)};
-$('#nPlay').onclick=()=>{if(NAMI.play){stopPlay();return}$('#nPlay').textContent='❚❚';$('#nPlay').setAttribute('aria-label','停止');NAMI.play=setInterval(()=>setK(NAMI.k+1),700)};
-addEventListener('resize',namiDraw);
+addEventListener('resize',()=>{if(NAMI.map&&NAMI.el.classList.contains('open'))NAMI.map.invalidateSize()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&NAMI.el.classList.contains('open')&&!NAMI.anim&&!RM)NAMI.anim=requestAnimationFrame(frame)});
 if(location.hash==='#nami')openNami();
 
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)get()});
