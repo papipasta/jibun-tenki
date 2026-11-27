@@ -146,6 +146,7 @@ textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5
 #nspark{display:block;width:100%;height:70px;margin-top:6px;touch-action:none}
 #nmsg{position:absolute;inset:0;z-index:950;display:none;place-items:center;text-align:center;padding:20px;background:rgba(13,18,23,.8)}
 .nctl{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:6px max(14px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:var(--nc);border-top:1px solid var(--nl)}
+#nSpd{min-width:0;padding:0 10px;font-size:.85rem;height:40px}
 #nPlay{width:48px;height:48px;border-radius:50%;border:0;background:var(--nt);color:var(--nb);font-size:1.1rem;flex:0 0 auto}
 #ntrack{flex:1 1 auto;position:relative;height:52px;touch-action:none;cursor:pointer;outline:none}
 #ntrack:focus-visible{box-shadow:0 0 0 2px var(--nt);border-radius:8px}
@@ -218,7 +219,7 @@ textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5
     <div class="nleg"><i id="nlegbar"></i><div></div></div>
     <div id="ncard" role="region" aria-label="地点の波"><div class="cardh"><span class="nm" id="ncname"></span><button id="ncx" aria-label="とじる">✕</button></div><div class="cardv" id="ncv"></div><svg id="nspark" aria-hidden="true"></svg></div>
     <div id="nmsg"></div></div>
-  <div class="nctl"><button id="nPlay" aria-label="再生">▶</button>
+  <div class="nctl"><button id="nPlay" aria-label="再生">▶</button><button class="nb" id="nSpd">ゆっくり</button>
     <div id="ntrack" tabindex="0" role="slider" aria-label="時刻"><div id="ndays"></div><div id="nbar"><div id="nfill"></div></div><div id="nnow"></div><div id="nthumb"></div></div></div>
 </section>
 <div id="toast"></div>
@@ -588,8 +589,13 @@ tr.addEventListener('pointermove',e=>{if(drag)setT(tAt(e))});
 tr.addEventListener('pointerup',()=>drag=false);tr.addEventListener('pointercancel',()=>drag=false);
 tr.addEventListener('keydown',e=>{const k={ArrowRight:1,ArrowLeft:-1,ArrowUp:3,ArrowDown:-3,PageUp:24,PageDown:-24}[e.key];if(k){e.preventDefault();stopPlay();setT(Math.round(NAMI.t)+k)}});
 function stopPlay(){clearInterval(NAMI.play);NAMI.play=null;$('#nPlay').textContent='▶';$('#nPlay').setAttribute('aria-label','再生')}
+const SPD=[['ゆっくり',.6],['ふつう',1.5],['はやい',4]];
+function spLabel(){const i=S.nsp??0;$('#nSpd').textContent=SPD[i][0];$('#nSpd').setAttribute('aria-label','再生の速さ '+SPD[i][0])}
+$('#nSpd').onclick=()=>{S.nsp=((S.nsp??0)+1)%SPD.length;persist();spLabel()};spLabel();
 $('#nPlay').onclick=()=>{if(NAMI.play){stopPlay();return}if(!NAMI.data)return;$('#nPlay').textContent='❚❚';$('#nPlay').setAttribute('aria-label','停止');
-  NAMI.play=setInterval(()=>{const N=NAMI.data.time.length;setT(Math.round(NAMI.t)+1>=N?NAMI.t0:Math.round(NAMI.t)+1)},160)};
+  let last=performance.now();
+  NAMI.play=setInterval(()=>{const now=performance.now(),dt=(now-last)/1000;last=now;const N=NAMI.data.time.length;
+    let t=NAMI.t+SPD[S.nsp??0][1]*dt;if(t>=N-1)t=NAMI.t0;setT(t)},90)};
 
 /* 地点のカード */
 const DIR16=['北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
