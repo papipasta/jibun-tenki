@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4efe4">
+<title>じぶん天気</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Kiwi+Maru:wght@400;500&family=Zen+Maru+Gothic:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe4;--card:#fffaf0;--ink:#2a2320;--sub:#7a6e66;--ac:#a8323a;--line:#e2d8c6;--hot:#d9573b;--cold:#3a78b5;
+  --title:'Zen Antique',serif;--body:'Kiwi Maru',serif;--voice:'Zen Maru Gothic',sans-serif}
+html[data-t=sora]{--bg:#d9ecf7;--card:#fff;--ink:#18324a;--sub:#5a7187;--ac:#1f78c8;--line:#c3dcec}
+html[data-t=azuki]{--bg:#5b2a2e;--card:#6e3439;--ink:#fbefe6;--sub:#e0bfb6;--ac:#f2c14e;--line:#85474c;--hot:#ffab8a;--cold:#9fd0ff}
+html[data-t=yoru]{--bg:#15171c;--card:#20232b;--ink:#eef0f4;--sub:#9aa1ad;--ac:#7fc8a9;--line:#323743;--hot:#ff9a7a;--cold:#8ec5ff}
+html[data-t=matcha]{--bg:#e6ead8;--card:#f8faf0;--ink:#26301f;--sub:#68725c;--ac:#5f7d2e;--line:#d2d9bf}
+*{box-sizing:border-box;min-width:0}
+html{font-size:16px}html[data-s=s]{font-size:14px}html[data-s=l]{font-size:18.5px}
+body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.5 var(--body);overflow-x:clip;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+header{flex:0 0 auto;padding:calc(10px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 6px max(14px,env(safe-area-inset-left))}
+.hrow{display:flex;align-items:center;gap:8px}
+h1{font:400 1.55rem/1.1 var(--title);margin:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{flex:0 0 auto;width:44px;height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);display:grid;place-items:center}
+.ib svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;min-height:38px;padding:0 14px;border-radius:19px;border:1.5px solid var(--line);background:var(--card);white-space:nowrap}
+.chip.on{background:var(--ac);border-color:var(--ac);color:var(--bg)}
+main{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px max(14px,env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px}
+.ct{font-size:.85rem;color:var(--sub);margin:0 0 8px}
+.now{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;align-items:center}
+.now .ic{width:clamp(84px,26vw,120px);height:clamp(84px,26vw,120px);grid-row:span 2}
+.temp{font:400 clamp(3rem,15vw,4.4rem)/1 var(--title);white-space:nowrap}
+.temp small{font-size:.45em;color:var(--sub)}
+.wname{font-size:1.05rem}
+.hl{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 16px;color:var(--sub);font-size:.9rem;margin-top:6px}
+.hl b{font-weight:500;color:var(--ink);white-space:nowrap}
+.hours{display:flex;gap:4px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x proximity}
+.hr{flex:0 0 58px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border-radius:12px;scroll-snap-align:start}
+.hr.n{background:color-mix(in srgb,var(--ac) 14%,transparent)}
+.hr .t{font-size:.8rem;color:var(--sub);white-space:nowrap}
+.hr svg{width:34px;height:34px}
+.hr .v{font-weight:500;white-space:nowrap}
+.hr .p{font-size:.75rem;color:var(--cold);white-space:nowrap;min-height:1.1em}
+.wk{display:grid;grid-template-columns:3.4em 30px 2.8em 2.6em minmax(40px,1fr) 2.6em;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}
+.wk:first-of-type{border-top:0}
+.wk .d{white-space:nowrap}.wk .d small{color:var(--sub);font-size:.78em}
+.wk svg{width:30px;height:30px}
+.wk .p{font-size:.8rem;color:var(--cold);text-align:right;white-space:nowrap}
+.wk .lo,.wk .hi{text-align:right;white-space:nowrap}.wk .lo{color:var(--cold)}.wk .hi{color:var(--hot)}
+.bar{height:6px;border-radius:3px;background:var(--line);position:relative}
+.bar i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,var(--cold),var(--hot))}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cell{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.cell .k{font-size:.8rem;color:var(--sub)}
+.cell .x{font-size:1.15rem;font-weight:500;white-space:nowrap}
+.word{display:flex;gap:12px;align-items:center}
+.word .ic{width:52px;height:52px;flex:0 0 auto}
+.bub{flex:1 1 auto;font:500 1.05rem/1.55 var(--voice);background:color-mix(in srgb,var(--ac) 12%,var(--card));border-radius:16px;padding:12px 14px;overflow-wrap:anywhere}
+.foot{text-align:center;font-size:.78rem;color:var(--sub);margin-top:4px}
+.foot a{color:inherit}
+.msg{text-align:center;padding:40px 10px;color:var(--sub)}
+.msg button{margin-top:12px}
+.btn{min-height:44px;padding:0 16px;border-radius:12px;border:1.5px solid var(--ac);background:var(--ac);color:var(--bg);white-space:nowrap}
+.btn.g{background:transparent;color:var(--ink);border-color:var(--line)}
+/* 設定 */
+#sheet{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;justify-content:center;z-index:9}
+#sheet.open{display:flex}
+.panel{width:100%;max-width:640px;max-height:calc(100% - 24px - env(safe-area-inset-top));overflow-y:auto;background:var(--bg);border-radius:20px 20px 0 0;padding:16px max(16px,env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.ph{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ph h2{font:400 1.3rem/1.2 var(--title);margin:0;flex:1}
+.sec{margin-top:18px}
+.sec h3{font-size:.95rem;margin:0 0 8px;color:var(--sub);font-weight:500}
+.row{display:flex;align-items:center;gap:6px;min-height:48px;padding:2px 0;border-bottom:1px solid var(--line)}
+.row .nm{flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .nm small{color:var(--sub)}
+.sm{flex:0 0 auto;width:44px;height:44px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);display:grid;place-items:center;font-size:1rem}
+.sm:disabled{opacity:.3}
+.tg{flex:0 0 auto;width:52px;height:30px;border-radius:15px;border:0;background:var(--line);position:relative;margin:7px 0}
+.tg::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--card);transition:left .15s}
+.tg.on{background:var(--ac)}.tg.on::after{left:25px}
+.srch{display:flex;gap:6px}
+.srch input{flex:1 1 auto;min-height:44px;font-size:16px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);padding:0 12px}
+.hint{font-size:.8rem;color:var(--sub);margin:6px 0 0}
+.res{display:flex;flex-direction:column;margin-top:6px}
+.res button{text-align:left;min-height:44px;border:0;border-bottom:1px solid var(--line);background:none;padding:6px 4px}
+.res small{color:var(--sub)}
+.wrapb{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.wrapb .chip{min-height:40px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{min-height:44px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);white-space:nowrap}
+.seg button.on{border-color:var(--ac);box-shadow:inset 0 0 0 1.5px var(--ac);font-weight:500}
+.sw{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin-right:6px;border:1px solid rgba(0,0,0,.2)}
+.wd{display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:8px;align-items:center;margin-bottom:8px}
+.wd svg{width:34px;height:34px}
+.wd input{min-height:44px;font-size:16px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);padding:0 12px;width:100%;font-family:var(--voice)}
+textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);padding:8px;font-family:monospace}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:10px 16px;z-index:20;display:none;width:max-content;max-width:calc(100% - 32px);text-align:center}
+@media (prefers-reduced-motion:reduce){.tg::after{transition:none}}
+@media (max-width:360px){.wk{grid-template-columns:3em 26px 2.6em 2.4em minmax(24px,1fr) 2.4em;gap:4px}.wk svg{width:26px;height:26px}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="hrow">
+      <h1>じぶん天気</h1>
+      <button class="ib" id="bRe" aria-label="更新"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button>
+      <button class="ib" id="bSet" aria-label="カスタマイズ"><svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
+    </div>
+    <div class="chips" id="chips"></div>
+  </header>
+  <main><div class="wrap" id="view"></div></main>
+</div>
+
+<div id="sheet"><div class="panel" role="dialog" aria-label="カスタマイズ">
+  <div class="ph"><h2>カスタマイズ</h2><button class="btn" id="bClose">とじる</button></div>
+
+  <div class="sec"><h3>地点</h3>
+    <div id="plist"></div>
+    <div class="srch" style="margin-top:10px"><input id="q" placeholder="地名でさがす（例：函館）" enterkeyhint="search"><button class="btn" id="bQ">検索</button></div>
+    <p class="hint">見つからないときはローマ字でも（例：Hakodate）</p>
+    <div class="res" id="res"></div>
+    <div class="wrapb"><button class="chip" id="bGeo">📍 今いる場所</button></div>
+    <div class="wrapb" id="presets"></div>
+  </div>
+
+  <div class="sec"><h3>表示するもの・ならび順</h3><div id="parts"></div></div>
+
+  <div class="sec"><h3>色</h3><div class="seg" id="themes"></div></div>
+  <div class="sec"><h3>文字の大きさ</h3><div class="seg" id="sizes"></div></div>
+  <div class="sec"><h3>単位</h3><div class="seg" id="units"></div><div class="seg" id="winds" style="margin-top:6px"></div></div>
+
+  <div class="sec"><h3>天気ごとのひとこと</h3><div id="words"></div></div>
+
+  <div class="sec"><h3>設定の持ち出し</h3>
+    <p class="hint" style="margin:0 0 6px">別の端末へ移すときは、この文字列をコピーして貼りつけます</p>
+    <textarea id="exp" spellcheck="false"></textarea>
+    <div class="wrapb"><button class="btn g" id="bCopy">コピー</button><button class="btn g" id="bImp">貼りつけた設定を読みこむ</button><button class="btn g" id="bReset">はじめの状態に戻す</button></div>
+  </div>
+</div></div>
+<div id="toast"></div>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PARTS={now:'今の天気',word:'ひとこと',hours:'24時間',week:'週間',detail:'くわしく'};
+const THEMES=[['kami','紙と墨','#f4efe4'],['sora','空','#d9ecf7'],['matcha','抹茶','#e6ead8'],['azuki','小豆','#5b2a2e'],['yoru','夜','#15171c']];
+const CATS={sun:'晴れ',cloud:'くもり',rain:'雨',snow:'雪',thunder:'雷',fog:'霧'};
+const PRESETS=[['札幌',43.0618,141.3545,'北海道'],['函館',41.7687,140.729,'北海道'],['旭川',43.7706,142.365,'北海道'],['釧路',42.9849,144.382,'北海道'],['青森',40.8244,140.74,'青森県'],['仙台',38.2682,140.8694,'宮城県'],['新潟',37.9161,139.0364,'新潟県'],['東京',35.6895,139.6917,'東京都'],['横浜',35.4437,139.638,'神奈川県'],['金沢',36.5613,136.6562,'石川県'],['名古屋',35.1815,136.9066,'愛知県'],['京都',35.0116,135.7681,'京都府'],['大阪',34.6937,135.5023,'大阪府'],['広島',34.3853,132.4553,'広島県'],['福岡',33.5904,130.4017,'福岡県'],['那覇',26.2124,127.6809,'沖縄県']];
+const DEF={places:[{n:'函館',lat:41.7687,lon:140.729,sub:'北海道'}],cur:0,
+  parts:[['now',1],['word',1],['hours',1],['week',1],['detail',1]],theme:'kami',size:'m',unit:'c',wind:'ms',
+  words:{sun:'洗濯日和　外に出よう',cloud:'雲の日はのんびり',rain:'傘を忘れずに',snow:'足元に気をつけて',thunder:'雷　早めに屋内へ',fog:'見通し注意　ゆっくり運転'}};
+const clone=o=>JSON.parse(JSON.stringify(o));
+let S=clone(DEF);
+const load=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
+const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const fix=o=>{const s=Object.assign(clone(DEF),o||{});s.words=Object.assign(clone(DEF.words),s.words||{});
+  const ids=s.parts.map(p=>p[0]);for(const k in PARTS)if(!ids.includes(k))s.parts.push([k,1]);s.parts=s.parts.filter(p=>PARTS[p[0]]);
+  if(!Array.isArray(s.places))s.places=[];if(s.cur>=s.places.length)s.cur=0;return s};
+S=fix(load('jibun-tenki'));
+const persist=()=>{save('jibun-tenki',S);};
+let cache=load('jibun-tenki-cache')||{};
+
+/* 天気コード */
+function info(c){
+  if(c===0)return['sun','快晴'];if(c===1)return['sun','晴れ'];if(c===2)return['part','晴れ時々くもり'];if(c===3)return['cloud','くもり'];
+  if(c===45||c===48)return['fog','霧'];if(c>=51&&c<=57)return['rain','霧雨'];
+  if(c===61)return['rain','小雨'];if(c===63)return['rain','雨'];if(c===65)return['rain','大雨'];if(c===66||c===67)return['rain','冷たい雨'];
+  if(c===71)return['snow','小雪'];if(c===73)return['snow','雪'];if(c===75)return['snow','大雪'];if(c===77)return['snow','霧雪'];
+  if(c>=80&&c<=82)return['rain',c===82?'激しいにわか雨':'にわか雨'];if(c===85||c===86)return['snow','にわか雪'];
+  if(c===95)return['thunder','雷雨'];if(c===96||c===99)return['thunder','ひょうを伴う雷雨'];return['cloud','—']}
+function icon(k,day=true){
+  const sun=day?'<circle cx="24" cy="24" r="9" fill="#f2a93b"/><g stroke="#f2a93b" stroke-width="3" stroke-linecap="round"><path d="M24 6v5M24 37v5M6 24h5M37 24h5M11 11l3.5 3.5M33.5 33.5L37 37M11 37l3.5-3.5M33.5 14.5L37 11"/></g>'
+    :'<path d="M30 8a15 15 0 1 0 10 26A12 12 0 0 1 30 8z" fill="#e8c96a"/>';
+  const cl=(x=0,y=0,c='#b9c2cc')=>`<path transform="translate(${x} ${y})" d="M14 36h20a8 8 0 0 0 0-16 11 11 0 0 0-21-2 9 9 0 0 0 1 18z" fill="${c}"/>`;
+  const drops='<g stroke="#4a8fd6" stroke-width="3" stroke-linecap="round"><path d="M17 40l-2 5M25 40l-2 5M33 40l-2 5"/></g>';
+  const flakes='<g fill="#8fb8e0"><circle cx="16" cy="43" r="2.4"/><circle cx="24" cy="45" r="2.4"/><circle cx="32" cy="43" r="2.4"/></g>';
+  let b='';
+  if(k==='sun')b=sun;
+  else if(k==='part')b=`<g transform="translate(-2 -3) scale(.72)">${sun}</g>`+cl(4,2,'#c9d1d9');
+  else if(k==='cloud')b=cl(-4,-4,'#d3d9df')+cl(2,2);
+  else if(k==='fog')b=cl(0,-6)+'<g stroke="#9aa3ad" stroke-width="3" stroke-linecap="round"><path d="M9 36h30M13 42h24"/></g>';
+  else if(k==='rain')b=cl(0,-4,'#9eaab6')+drops;
+  else if(k==='snow')b=cl(0,-4,'#c3ccd5')+flakes;
+  else if(k==='thunder')b=cl(0,-4,'#7f8a96')+'<path d="M25 30l-6 9h5l-3 8 9-11h-5l3-6z" fill="#f2c14e"/>';
+  return `<svg viewBox="0 0 48 48" aria-hidden="true">${b}</svg>`}
+const catOf=k=>k==='part'?'sun':k;
+
+/* 取得 */
+const tU=()=>S.unit==='f'?'°F':'°C';const wU=()=>S.wind==='ms'?'m/s':'km/h';
+function url(p){return 'https://api.open-meteo.com/v1/forecast?latitude='+p.lat+'&longitude='+p.lon+
+  '&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl'+
+  '&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max'+
+  '&timezone=auto&forecast_days=7&wind_speed_unit='+S.wind+(S.unit==='f'?'&temperature_unit=fahrenheit':'')}
+const keyOf=p=>p.lat+','+p.lon+','+S.unit+','+S.wind;
+let busy=false;
+async function get(force){
+  const p=S.places[S.cur];renderChips();if(!p){view.innerHTML='<div class="msg">地点がありません<br><button class="btn" id="bAdd">地点を追加</button></div>';$('#bAdd').onclick=openSheet;return}
+  const k=keyOf(p),c=cache[k];
+  if(c)draw(c.d,c.at);else view.innerHTML='<div class="msg">読みこみ中…</div>';
+  if(!force&&c&&Date.now()-c.at<15*60e3)return;
+  if(busy)return;busy=true;
+  try{const r=await fetch(url(p));if(!r.ok)throw 0;const d=await r.json();cache[k]={d,at:Date.now()};
+    const keys=Object.keys(cache);if(keys.length>12)delete cache[keys[0]];save('jibun-tenki-cache',cache);
+    if(S.places[S.cur]===p)draw(d,cache[k].at)}
+  catch(e){if(c)toast('更新できませんでした　前回の天気を表示しています');else{view.innerHTML='<div class="msg">天気を取得できませんでした<br>通信を確かめてください<br><button class="btn" id="bTry">もう一度</button></div>';$('#bTry').onclick=()=>get(true)}}
+  finally{busy=false}}
+
+/* 描画 */
+const view=$('#view');
+const hm=s=>s.slice(11,16);const r0=v=>Math.round(v);
+const DIR=['北','北東','東','南東','南','南西','西','北西'];
+function draw(d,at){
+  const c=d.current,h=d.hourly,dl=d.daily,[k,name]=info(c.weather_code),day=c.is_day!==0;
+  const B={};
+  B.now=`<section class="card now">${icon(k,day).replace('<svg','<svg class="ic"')}<div class="temp">${r0(c.temperature_2m)}<small>${tU()}</small></div><div class="wname">${esc(name)}</div>
+    <div class="hl"><span>最高 <b>${r0(dl.temperature_2m_max[0])}°</b></span><span>最低 <b>${r0(dl.temperature_2m_min[0])}°</b></span><span>体感 <b>${r0(c.apparent_temperature)}°</b></span><span>降水 <b>${dl.precipitation_probability_max[0]??'—'}%</b></span></div></section>`;
+  B.word=`<section class="card word">${icon(k,day).replace('<svg','<svg class="ic"')}<div class="bub">${esc(S.words[catOf(k)]||'')}</div></section>`;
+  let i0=h.time.findIndex(t=>t.slice(0,13)>=c.time.slice(0,13));if(i0<0)i0=0;
+  let hs='';for(let i=i0;i<Math.min(i0+24,h.time.length);i++){const [hk]=info(h.weather_code[i]),pp=h.precipitation_probability[i];
+    hs+=`<div class="hr${i===i0?' n':''}"><span class="t">${i===i0?'今':(+h.time[i].slice(11,13))+'時'}</span>${icon(hk,h.is_day[i]!==0)}<span class="v">${r0(h.temperature_2m[i])}°</span><span class="p">${pp>=10?pp+'%':''}</span></div>`}
+  B.hours=`<section class="card"><p class="ct">24時間</p><div class="hours">${hs}</div></section>`;
+  const lo=Math.min(...dl.temperature_2m_min),hi=Math.max(...dl.temperature_2m_max),sp=Math.max(1,hi-lo);
+  const W='日月火水木金土';let ws='';
+  dl.time.forEach((t,i)=>{const dt=new Date(t+'T00:00'),[dk]=info(dl.weather_code[i]),a=dl.temperature_2m_min[i],b=dl.temperature_2m_max[i];
+    ws+=`<div class="wk"><span class="d">${i===0?'今日':(dt.getMonth()+1)+'/'+dt.getDate()} <small>${W[dt.getDay()]}</small></span>${icon(dk)}<span class="p">${dl.precipitation_probability_max[i]??'—'}%</span><span class="lo">${r0(a)}°</span><span class="bar"><i style="left:${(a-lo)/sp*100}%;right:${(hi-b)/sp*100}%"></i></span><span class="hi">${r0(b)}°</span></div>`});
+  B.week=`<section class="card"><p class="ct">週間</p>${ws}</section>`;
+  const dir=DIR[Math.round((c.wind_direction_10m||0)/45)%8];
+  const cells=[['湿度',r0(c.relative_humidity_2m)+'%'],['風',dir+' '+(S.wind==='ms'?c.wind_speed_10m.toFixed(1):r0(c.wind_speed_10m))+' '+wU()],
+    ['日の出',hm(dl.sunrise[0])],['日の入り',hm(dl.sunset[0])],['気圧',r0(c.pressure_msl)+' hPa'],['紫外線',dl.uv_index_max[0]!=null?(+dl.uv_index_max[0]).toFixed(0):'—']];
+  B.detail=`<section class="card"><p class="ct">くわしく</p><div class="grid">${cells.map(x=>`<div class="cell"><div class="k">${x[0]}</div><div class="x">${esc(x[1])}</div></div>`).join('')}</div></section>`;
+  const t=new Date(at);
+  view.innerHTML=S.parts.filter(p=>p[1]).map(p=>B[p[0]]).join('')+
+    `<p class="foot">${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} 更新　・　天気データ <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>`}
+
+function renderChips(){
+  $('#chips').innerHTML=S.places.map((p,i)=>`<button class="chip${i===S.cur?' on':''}" data-i="${i}">${esc(p.n)}</button>`).join('');
+  const on=$('#chips .on');if(on)on.scrollIntoView({inline:'nearest',block:'nearest'})}
+$('#chips').onclick=e=>{const b=e.target.closest('[data-i]');if(!b)return;S.cur=+b.dataset.i;persist();get()};
+
+/* 見た目 */
+function applyLook(){const r=document.documentElement;r.dataset.t=S.theme;r.dataset.s=S.size;
+  document.querySelector('meta[name=theme-color]').content=getComputedStyle(r).getPropertyValue('--bg').trim()}
+
+/* 設定パネル */
+const sheet=$('#sheet');
+function openSheet(){renderSheet();sheet.classList.add('open')}
+function closeSheet(){sheet.classList.remove('open');get()}
+$('#bSet').onclick=openSheet;$('#bClose').onclick=closeSheet;
+sheet.onclick=e=>{if(e.target===sheet)closeSheet()};
+$('#bRe').onclick=()=>get(true);
+
+function renderSheet(){
+  const L=S.places.length;
+  $('#plist').innerHTML=L?S.places.map((p,i)=>`<div class="row"><span class="nm">${esc(p.n)} <small>${esc(p.sub||'')}</small></span>
+    <button class="sm" data-pu="${i}" ${i?'':'disabled'} aria-label="上へ">↑</button><button class="sm" data-pd="${i}" ${i<L-1?'':'disabled'} aria-label="下へ">↓</button><button class="sm" data-px="${i}" aria-label="削除">✕</button></div>`).join(''):'<p class="hint">まだ地点がありません</p>';
+  $('#presets').innerHTML=PRESETS.filter(p=>!S.places.some(q=>q.n===p[0])).map((p,i)=>`<button class="chip" data-pre="${esc(p[0])}">＋ ${esc(p[0])}</button>`).join('');
+  $('#parts').innerHTML=S.parts.map((p,i)=>`<div class="row"><button class="tg${p[1]?' on':''}" data-tg="${i}" aria-label="${PARTS[p[0]]}を表示" aria-pressed="${!!p[1]}"></button><span class="nm">${PARTS[p[0]]}</span>
+    <button class="sm" data-mu="${i}" ${i?'':'disabled'} aria-label="上へ">↑</button><button class="sm" data-md="${i}" ${i<S.parts.length-1?'':'disabled'} aria-label="下へ">↓</button></div>`).join('');
+  $('#themes').innerHTML=THEMES.map(t=>`<button class="${S.theme===t[0]?'on':''}" data-th="${t[0]}"><span class="sw" style="background:${t[2]}"></span>${t[1]}</button>`).join('');
+  $('#sizes').innerHTML=[['s','小'],['m','中'],['l','大']].map(t=>`<button class="${S.size===t[0]?'on':''}" data-sz="${t[0]}">${t[1]}</button>`).join('');
+  $('#units').innerHTML=[['c','℃（摂氏）'],['f','℉（華氏）']].map(t=>`<button class="${S.unit===t[0]?'on':''}" data-un="${t[0]}">${t[1]}</button>`).join('');
+  $('#winds').innerHTML=[['ms','風 m/s'],['kmh','風 km/h']].map(t=>`<button class="${S.wind===t[0]?'on':''}" data-wi="${t[0]}">${t[1]}</button>`).join('');
+  $('#words').innerHTML=Object.keys(CATS).map(c=>`<label class="wd">${icon(c)}<input data-w="${c}" value="${esc(S.words[c]||'')}" placeholder="${CATS[c]}のときのひとこと" maxlength="60" aria-label="${CATS[c]}のひとこと"></label>`).join('');
+  $('#exp').value=JSON.stringify({places:S.places,parts:S.parts,theme:S.theme,size:S.size,unit:S.unit,wind:S.wind,words:S.words});
+}
+const panel=$('.panel');
+panel.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const d=b.dataset,P=S.places,A=S.parts,sw=(a,i,j)=>{[a[i],a[j]]=[a[j],a[i]]};
+  const curP=P[S.cur];
+  if(d.pu)sw(P,+d.pu,+d.pu-1);else if(d.pd)sw(P,+d.pd,+d.pd+1);
+  else if(d.px){P.splice(+d.px,1)}
+  else if(d.pre){const p=PRESETS.find(x=>x[0]===d.pre);P.push({n:p[0],lat:p[1],lon:p[2],sub:p[3]});S.cur=P.length-1;toast(p[0]+' を追加しました')}
+  else if(d.tg)A[+d.tg][1]^=1;else if(d.mu)sw(A,+d.mu,+d.mu-1);else if(d.md)sw(A,+d.md,+d.md+1);
+  else if(d.th){S.theme=d.th;applyLook()}else if(d.sz){S.size=d.sz;applyLook()}
+  else if(d.un)S.unit=d.un;else if(d.wi)S.wind=d.wi;
+  else if(d.add!==undefined){const r=results[+d.add];P.push(r);S.cur=P.length-1;$('#res').innerHTML='';$('#q').value='';toast(r.n+' を追加しました')}
+  else return;
+  if(!d.pre&&d.add===undefined){const j=P.indexOf(curP);S.cur=j>=0?j:0}
+  persist();renderSheet();renderChips()});
+$('#words').addEventListener('input',e=>{const c=e.target.dataset.w;if(c){S.words[c]=e.target.value;persist()}});
+
+/* 検索 */
+let results=[];
+async function search(){
+  const q=$('#q').value.trim();if(q.length<2){toast('2文字以上で入れてください');return}
+  $('#res').innerHTML='<p class="hint">さがしています…</p>';
+  try{const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?count=8&language=ja&format=json&name='+encodeURIComponent(q));const d=await r.json();
+    results=(d.results||[]).map(x=>({n:x.name,lat:+x.latitude.toFixed(4),lon:+x.longitude.toFixed(4),sub:[x.admin1,x.country].filter(Boolean).join('・')}));
+    $('#res').innerHTML=results.length?results.map((x,i)=>`<button data-add="${i}">${esc(x.n)} <small>${esc(x.sub)}</small></button>`).join(''):'<p class="hint">見つかりませんでした　ローマ字や「市」を付けて試してみてください</p>'}
+  catch(e){$('#res').innerHTML='<p class="hint">検索できませんでした　通信を確かめてください</p>'}}
+$('#bQ').onclick=search;$('#q').onkeydown=e=>{if(e.key==='Enter')search()};
+$('#bGeo').onclick=()=>{if(!navigator.geolocation){toast('この端末では現在地が使えません');return}
+  toast('現在地を調べています…');
+  navigator.geolocation.getCurrentPosition(p=>{S.places.push({n:'現在地',lat:+p.coords.latitude.toFixed(3),lon:+p.coords.longitude.toFixed(3),sub:'📍'});S.cur=S.places.length-1;persist();renderSheet();renderChips();toast('現在地を追加しました')},
+    ()=>toast('現在地を取得できませんでした　位置情報の許可を確かめてください'),{timeout:10000})};
+
+/* 持ち出し */
+$('#bCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#exp').value);toast('コピーしました')}catch(e){$('#exp').select();toast('選択しました　長押しでコピーしてください')}};
+$('#bImp').onclick=()=>{try{S=fix(Object.assign(JSON.parse($('#exp').value),{cur:0}));persist();applyLook();renderSheet();renderChips();toast('読みこみました')}catch(e){toast('読みこめませんでした　文字列を確かめてください')}};
+let resetArmed=0;
+$('#bReset').onclick=e=>{if(Date.now()-resetArmed>3000){resetArmed=Date.now();e.target.textContent='もう一度押すと戻します';setTimeout(()=>e.target.textContent='はじめの状態に戻す',3000);return}
+  S=clone(DEF);persist();applyLook();renderSheet();renderChips();toast('はじめの状態に戻しました')};
+
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',2600)}
+
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)get()});
+applyLook();get();
+}
+</script>
+</body>
+</html>
