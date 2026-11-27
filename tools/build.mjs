@@ -1,9 +1,11 @@
 // 使い方: node tools/build.mjs <元のHTML> <パスワードのファイル>  → index.html（鍵付き）を書き出す
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 const [src, pwFile] = process.argv.slice(2);
 const plain = readFileSync(src, 'utf8'), pw = readFileSync(pwFile, 'utf8').trim();
 const ITER = 600000, enc = new TextEncoder(), b64 = u => Buffer.from(u).toString('base64');
-const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+// 前回と同じ salt を使い回す → 鍵が変わらないので「この端末で記憶する」が切れない（iv は毎回新しく）
+const prev = existsSync('index.html') && readFileSync('index.html', 'utf8').match(/const P=\{"v":1,"it":\d+,"s":"([^"]+)"/);
+const salt = prev ? Uint8Array.from(Buffer.from(prev[1], 'base64')) : crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
 const base = await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey']);
 const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: ITER, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);
 const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(plain)));
