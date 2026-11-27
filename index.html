@@ -23,7 +23,7 @@ button{cursor:pointer}
 #app{height:100vh;height:100dvh;display:flex;flex-direction:column}
 header{flex:0 0 auto;padding:calc(10px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 6px max(14px,env(safe-area-inset-left))}
 .hrow{display:flex;align-items:center;gap:8px}
-h1{font:400 1.55rem/1.1 var(--title);margin:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+h1{font:400 min(1.55rem,7vw)/1.1 var(--title);margin:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ib{flex:0 0 auto;width:44px;height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);display:grid;place-items:center}
 .ib svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .chips{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:none}
@@ -101,7 +101,26 @@ main{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px max(14px,env(safe-ar
 .wd svg{width:34px;height:34px}
 .wd input{min-height:44px;font-size:16px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);padding:0 12px;width:100%;font-family:var(--voice)}
 textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);padding:8px;font-family:monospace}
-#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:10px 16px;z-index:20;display:none;width:max-content;max-width:calc(100% - 32px);text-align:center}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:10px 16px;z-index:2000;display:none;width:max-content;max-width:calc(100% - 32px);text-align:center}
+/* 波の地図 */
+#nami{position:fixed;inset:0;z-index:8;background:var(--bg);display:none;flex-direction:column;height:100vh;height:100dvh}
+#nami.open{display:flex}
+.nbar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left))}
+.nbar h2{font:400 1.3rem/1.15 var(--title);margin:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#nmapw{flex:1 1 auto;min-height:0;position:relative}
+#nmap{position:absolute;inset:0;background:#cfd8de}
+#ncv{position:absolute;inset:0;width:100%;height:100%;z-index:450;pointer-events:none;opacity:.66}
+#nwhen{position:absolute;top:10px;left:10px;z-index:900;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:6px 12px;font-weight:500;white-space:nowrap;pointer-events:none}
+#ninfo{position:absolute;left:10px;right:10px;bottom:10px;z-index:900;background:var(--card);border:1.5px solid var(--ink);border-radius:14px;padding:10px 12px;display:none;font-size:.92rem}
+#ninfo b{font-size:1.15rem;white-space:nowrap}
+#nmsg{position:absolute;inset:0;z-index:950;display:none;place-items:center;text-align:center;padding:20px;background:color-mix(in srgb,var(--bg) 80%,transparent)}
+.nctl{flex:0 0 auto;padding:8px max(12px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));border-top:1.5px solid var(--line);background:var(--card)}
+.leg{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:2px;font-size:.68rem;color:var(--sub);text-align:center}
+.leg i{display:block;height:10px;border-radius:2px;margin-bottom:2px}
+.leg span{white-space:nowrap}
+.nrow{display:flex;align-items:center;gap:6px;margin-top:8px}
+#nrange{flex:1 1 auto;height:44px;margin:0;accent-color:var(--ac)}
+.leaflet-container{font-family:var(--body)}
 @media (prefers-reduced-motion:reduce){.tg::after{transition:none}}
 @media (max-width:360px){.wk{grid-template-columns:3em 26px 2.6em 2.4em minmax(24px,1fr) 2.4em;gap:4px}.wk svg{width:26px;height:26px}}
 </style>
@@ -111,6 +130,7 @@ textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5
   <header>
     <div class="hrow">
       <h1>じぶん天気</h1>
+      <button class="ib" id="bNami" aria-label="波の地図"><svg viewBox="0 0 24 24"><path d="M2 9c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><path d="M2 15c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/></svg></button>
       <button class="ib" id="bRe" aria-label="更新"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button>
       <button class="ib" id="bSet" aria-label="カスタマイズ"><svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
     </div>
@@ -145,6 +165,14 @@ textarea{width:100%;min-height:90px;font-size:13px;border-radius:12px;border:1.5
     <div class="wrapb"><button class="btn g" id="bCopy">コピー</button><button class="btn g" id="bImp">貼りつけた設定を読みこむ</button><button class="btn g" id="bReset">はじめの状態に戻す</button></div>
   </div>
 </div></div>
+<section id="nami" aria-label="波の地図">
+  <div class="nbar"><button class="btn g" id="nBack">もどる</button><h2>波の予想</h2><button class="ib" id="nRe" aria-label="更新"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button></div>
+  <div id="nmapw"><div id="nmap"></div><canvas id="ncv"></canvas><div id="nwhen">—</div><div id="ninfo"></div><div id="nmsg"></div></div>
+  <div class="nctl">
+    <div class="leg" id="nleg"></div>
+    <div class="nrow"><button class="sm" id="nPlay" aria-label="再生">▶</button><button class="sm" id="nPrev" aria-label="3時間前">−</button><input type="range" id="nrange" min="0" max="0" value="0" aria-label="時刻"><button class="sm" id="nNext" aria-label="3時間後">＋</button></div>
+  </div>
+</section>
 <div id="toast"></div>
 
 <script>
@@ -311,6 +339,95 @@ $('#bReset').onclick=e=>{if(Date.now()-resetArmed>3000){resetArmed=Date.now();e.
   S=clone(DEF);persist();applyLook();renderSheet();renderChips();toast('はじめの状態に戻しました')};
 
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',2600)}
+
+
+/* ===== 波の地図 ===== */
+const NAMI={el:$('#nami'),map:null,data:null,idx:[],k:0,play:null};
+const LAT0=46,LAT1=24,LON0=124,LON1=148,NY=LAT0-LAT1+1,NX=LON1-LON0+1;
+const EDGES=[.5,1,1.5,2,2.5,3,3.5,4,4.5];
+const COLS=['#1a237e','#1f4fd1','#3b8fe8','#27c3d3','#22b14c','#cbc51e','#e0791b','#d92bc8','#d9748a','#c81e1e'];
+const RGB=COLS.map(c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)));
+const LBL=['〜0.5','0.5','1','1.5','2','2.5','3','3.5','4','4.5〜'];
+$('#nleg').innerHTML=COLS.map((c,i)=>`<div><i style="background:${c}"></i><span>${LBL[i]}</span></div>`).join('');
+const bin=v=>{let i=0;while(i<9&&v>=EDGES[i])i++;return i};
+function loadLeaflet(){return new Promise((ok,ng)=>{if(window.L)return ok();
+  const l=document.createElement('link');l.rel='stylesheet';l.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';document.head.appendChild(l);
+  const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';sc.onload=ok;sc.onerror=ng;document.head.appendChild(sc)})}
+function nmsg(t,btn){const m=$('#nmsg');if(!t){m.style.display='none';return}m.style.display='grid';m.innerHTML=`<div>${esc(t)}${btn?'<br><button class="btn" id="nTry" style="margin-top:12px">もう一度</button>':''}</div>`;if(btn)$('#nTry').onclick=()=>namiFetch(true)}
+async function namiFetch(force){
+  const c=load('jibun-tenki-nami');
+  if(!force&&c&&Date.now()-c.at<60*60e3){NAMI.data=c;namiReady();return}
+  nmsg('波のデータを読みこみ中…');
+  const pts=[];for(let y=0;y<NY;y++)for(let x=0;x<NX;x++)pts.push([LAT0-y,LON0+x]);
+  try{const out=[];
+    for(let i=0;i<pts.length;i+=150){const ch=pts.slice(i,i+150);
+      const r=await fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+ch.map(p=>p[0]).join(',')+'&longitude='+ch.map(p=>p[1]).join(',')+'&hourly=wave_height,wave_direction,wave_period&timezone=Asia%2FTokyo&forecast_days=5');
+      if(!r.ok)throw 0;let d=await r.json();if(!Array.isArray(d))d=[d];out.push(...d)}
+    const time=out[0].hourly.time,T=time.length,r2=v=>v==null?null:Math.round(v*100)/100;
+    const h=[],dr=[],pr=[];for(let t=0;t<T;t++){h.push(out.map(o=>r2(o.hourly.wave_height[t])));dr.push(out.map(o=>o.hourly.wave_direction[t]==null?null:Math.round(o.hourly.wave_direction[t])));pr.push(out.map(o=>r2(o.hourly.wave_period[t])))}
+    NAMI.data={at:Date.now(),time,h,dr,pr};save('jibun-tenki-nami',NAMI.data);namiReady()}
+  catch(e){if(c){NAMI.data=c;namiReady();toast('更新できませんでした　前回のデータを表示しています')}else nmsg('波のデータを取得できませんでした　通信を確かめてください',1)}}
+function namiReady(){nmsg('');const tm=NAMI.data.time,nowS=new Date(Date.now()+9*3600e3).toISOString().slice(0,13);
+  let i0=tm.findIndex(t=>t.slice(0,13)>=nowS);if(i0<0)i0=0;NAMI.idx=[];for(let i=i0;i<tm.length;i+=3)NAMI.idx.push(i);
+  const R=$('#nrange');R.max=NAMI.idx.length-1;NAMI.k=Math.min(NAMI.k,NAMI.idx.length-1);R.value=NAMI.k;namiDraw()}
+/* 格子の値（陸は null） */
+const gv=(a,y,x)=>(y<0||y>=NY||x<0||x>=NX)?null:a[y*NX+x];
+function sample(a,lat,lon){const fy=LAT0-lat,fx=lon-LON0,y=Math.floor(fy),x=Math.floor(fx),ty=fy-y,tx=fx-x;
+  const c=[[gv(a,y,x),(1-tx)*(1-ty)],[gv(a,y,x+1),tx*(1-ty)],[gv(a,y+1,x),(1-tx)*ty],[gv(a,y+1,x+1),tx*ty]];
+  let s=0,w=0;for(const [v,k] of c)if(v!=null){s+=v*k;w+=k}return w>.2?s/w:null}
+function nearest(a,lat,lon){const y=Math.round(LAT0-lat),x=Math.round(lon-LON0);let best=null,bd=9;
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const v=gv(a,y+dy,x+dx),d=dy*dy+dx*dx;if(v!=null&&d<bd){bd=d;best=v}}return best}
+const off=document.createElement('canvas'),SC=3;let raf=0;
+function namiDraw(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;namiPaint()})}
+function namiPaint(){
+  const m=NAMI.map,cv=$('#ncv');if(!m||!NAMI.data)return;
+  const W=cv.clientWidth,H=cv.clientHeight,dpr=Math.min(2,devicePixelRatio||1);
+  cv.width=W*dpr;cv.height=H*dpr;const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  const t=NAMI.idx[NAMI.k],hh=NAMI.data.h[t],dd=NAMI.data.dr[t];
+  const w=Math.ceil(W/SC),h=Math.ceil(H/SC);off.width=w;off.height=h;const o=off.getContext('2d'),img=o.createImageData(w,h),px=img.data;
+  for(let j=0;j<h;j++){const ll0=m.containerPointToLatLng([0,j*SC+SC/2]);
+    for(let i=0;i<w;i++){const lon=m.containerPointToLatLng([i*SC+SC/2,j*SC+SC/2]).lng,v=sample(hh,ll0.lat,lon);
+      if(v==null)continue;const c=RGB[bin(v)],q=(j*w+i)*4;px[q]=c[0];px[q+1]=c[1];px[q+2]=c[2];px[q+3]=255}}
+  o.putImageData(img,0,0);g.imageSmoothingEnabled=false;g.drawImage(off,0,0,w*SC,h*SC);
+  /* 波向の矢印（波の進む向き） */
+  const a=m.latLngToContainerPoint([35,135]),b=m.latLngToContainerPoint([35,136]),sp=Math.max(1,b.x-a.x),st=Math.max(1,Math.ceil(30/sp));
+  g.strokeStyle='rgba(20,20,20,.75)';g.lineWidth=1.5;g.lineCap='round';
+  for(let y=0;y<NY;y+=st)for(let x=0;x<NX;x+=st){const d=dd[y*NX+x];if(d==null)continue;
+    const p=m.latLngToContainerPoint([LAT0-y,LON0+x]);if(p.x<-10||p.y<-10||p.x>W+10||p.y>H+10)continue;
+    const r=(d+180)*Math.PI/180,L=Math.min(14,sp*st*.4),dx=Math.sin(r)*L,dy=-Math.cos(r)*L;
+    g.beginPath();g.moveTo(p.x-dx/2,p.y-dy/2);g.lineTo(p.x+dx/2,p.y+dy/2);
+    const hx=p.x+dx/2,hy=p.y+dy/2,ang=Math.atan2(dy,dx);
+    g.lineTo(hx-5*Math.cos(ang-.5),hy-5*Math.sin(ang-.5));g.moveTo(hx,hy);g.lineTo(hx-5*Math.cos(ang+.5),hy-5*Math.sin(ang+.5));g.stroke()}
+  const tm=NAMI.data.time[t],dt=new Date(tm+':00');
+  $('#nwhen').textContent=`${dt.getMonth()+1}/${dt.getDate()}（${'日月火水木金土'[dt.getDay()]}）${+tm.slice(11,13)}時`;
+  if(NAMI.pick)namiInfo(NAMI.pick)}
+const DIR16=['北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
+function namiInfo(ll){NAMI.pick=ll;const t=NAMI.idx[NAMI.k],D=NAMI.data,v=sample(D.h[t],ll.lat,ll.lng),box=$('#ninfo');box.style.display='block';
+  if(v==null){box.innerHTML='ここは陸か、予想の範囲外です';return}
+  const d=nearest(D.dr[t],ll.lat,ll.lng),p=nearest(D.pr[t],ll.lat,ll.lng);
+  box.innerHTML=`波の高さ <b>${v.toFixed(1)} m</b>　${d!=null?DIR16[Math.round(d/22.5)%16]+'から':''}${p!=null?'　周期 '+p.toFixed(0)+' 秒':''}`}
+async function openNami(){
+  NAMI.el.classList.add('open');
+  try{await loadLeaflet()}catch(e){nmsg('地図を読みこめませんでした　通信を確かめてください');return}
+  if(!NAMI.map){
+    const m=NAMI.map=L.map('nmap',{zoomControl:false,zoomSnap:.25,attributionControl:true,minZoom:4,maxZoom:9,maxBounds:[[18,112],[52,160]]});
+    L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png',{attribution:'<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>・<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>',maxZoom:9}).addTo(m);
+    m.attributionControl.setPrefix(false);
+    m.fitBounds([[30.5,129],[45.5,145.5]],{padding:[4,4]});
+    const p=S.places[S.cur];if(p)L.circleMarker([p.lat,p.lon],{radius:6,color:'#fff',weight:2,fillColor:'#222',fillOpacity:1}).addTo(m);
+    m.on('move zoom resize',namiDraw);m.on('click',e=>namiInfo(e.latlng));
+  }else NAMI.map.invalidateSize();
+  if(location.hash!=='#nami')history.replaceState(null,'','#nami');
+  namiFetch()}
+function closeNami(){NAMI.el.classList.remove('open');stopPlay();if(location.hash==='#nami')history.replaceState(null,'',location.pathname+location.search)}
+function setK(k){const n=NAMI.idx.length;if(!n)return;NAMI.k=(k+n)%n;$('#nrange').value=NAMI.k;namiDraw()}
+function stopPlay(){clearInterval(NAMI.play);NAMI.play=null;$('#nPlay').textContent='▶';$('#nPlay').setAttribute('aria-label','再生')}
+$('#bNami').onclick=openNami;$('#nBack').onclick=closeNami;$('#nRe').onclick=()=>namiFetch(true);
+$('#nrange').oninput=e=>{stopPlay();setK(+e.target.value)};
+$('#nPrev').onclick=()=>{stopPlay();setK(NAMI.k-1)};$('#nNext').onclick=()=>{stopPlay();setK(NAMI.k+1)};
+$('#nPlay').onclick=()=>{if(NAMI.play){stopPlay();return}$('#nPlay').textContent='❚❚';$('#nPlay').setAttribute('aria-label','停止');NAMI.play=setInterval(()=>setK(NAMI.k+1),700)};
+addEventListener('resize',namiDraw);
+if(location.hash==='#nami')openNami();
 
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)get()});
 applyLook();get();
